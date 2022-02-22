@@ -1,12 +1,12 @@
 /*
 ** EPITECH PROJECT, 2021
-** likedvis
+** my_world
 ** File description:
-** likedvis.h
+** my_world.h
 */
 
-#ifndef LIKEDVIS_H_
-    #define LIKEDVIS_H_
+#ifndef my_world_H_
+    #define my_world_H_
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <unistd.h>
@@ -24,7 +24,7 @@ struct global {
 	int apply_mode;
 };
 
-int likedvis(int argc, char **argv);
+int my_world(int argc, char **argv);
 
 quad_list *create_mesh (int x, int y, sfTexture *texture);
 quad_list *new_elem (float x, float y, sfTexture *texture);

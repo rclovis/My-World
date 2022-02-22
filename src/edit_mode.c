@@ -5,7 +5,7 @@
 ** edit_mode
 */
 
-#include "../inc/likedvis.h"
+#include "../inc/my_world.h"
 
 void raise_vertex (quad_list *root, sfVector2i m, int button)
 {

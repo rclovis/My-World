@@ -5,7 +5,7 @@
 ** place
 */
 
-#include "../inc/likedvis.h"
+#include "../inc/my_world.h"
 
 void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c)
 {

@@ -5,7 +5,7 @@
 ** calcul matricel
 */
 
-#include "../inc/likedvis.h"
+#include "../inc/my_world.h"
 
 float **combine (float **m1, float **m2)
 {
