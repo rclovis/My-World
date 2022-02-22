@@ -9,7 +9,7 @@ CC	=	gcc
 
 CFLAGS	=	-g3 -O3 -Iinc
 
-LINKER	=	-Llib -lmy -lm\
+LINKER	=	-Llib -lmy -lm \
 			-lcsfml-graphics -lcsfml-window -lcsfml-audio -lcsfml-system
 
 SRC_DIR	=	src
