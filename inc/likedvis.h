@@ -29,7 +29,9 @@ int likedvis(int argc, char **argv);
 quad_list *create_mesh (int x, int y, sfTexture *texture);
 quad_list *new_elem (float x, float y, sfTexture *texture);
 
-void *calcul_projection (quad_list *elem, float **m1, float **comb);
+global *setup_global (void);
+
+void calcul_projection (quad_list *elem, float **m1, float **comb);
 void update_mesh (quad_list *root, float zoom, float x, float z);
 int approximation (int i, int j, int delta);
 void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c);

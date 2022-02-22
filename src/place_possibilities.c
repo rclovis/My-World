@@ -12,7 +12,7 @@ void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c)
     sfVector2f p1, p2, p3, p4;
     sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
     for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
-         for (int i = 0;i < 4;i++)
+        for (int i = 0;i < 4;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
         if (approximation(p[0].x, m.x, 10) && approximation(p[0].y, m.y, 10)) {
             sfCircleShape_setPosition(c, (sfVector2f) {p[0].x, p[0].y});
@@ -112,9 +112,8 @@ int is_in_triangle (sfVector2i pt, sfVector2f v1, sfVector2f v2, sfVector2f v3)
     float p2 = (pt.x - v3.x) * (v2.y - v3.y) - (v2.x - v3.x) * (pt.y - v3.y);
     float p3 = (pt.x - v1.x) * (v3.y - v1.y) - (v3.x - v1.x) * (pt.y - v1.y);
     if ((p1 < 0) || (p2 < 0) || (p3 < 0)) {
-        if ((p1 > 0) || (p2 > 0) || (p3 > 0)) {
+        if ((p1 > 0) || (p2 > 0) || (p3 > 0))
             return 0;
-        }
     }
     return 1;
 }
