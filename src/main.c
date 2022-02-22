@@ -42,7 +42,7 @@ int my_world (int argc, char **argv)
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
     sfTexture *yes = sfTexture_createFromFile("sand.png", NULL);
-    quad_list *root = create_mesh(200, 200, yes);
+    quad_list *root = create_mesh(10, 10, yes);
     sfClock *clock = sfClock_create();
     sfEvent event;
     int state = 0;
@@ -240,6 +240,10 @@ void calcul_projection (quad_list *elem, float **m1, float **mx)
             if (vertex2d3[0][0] < -400 || vertex2d3[0][0] > 400 || vertex2d3[1][0] < -300 || vertex2d3[1][0] > 300) {
                 if (vertex2d4[0][0] < -400 || vertex2d4[0][0] > 400 || vertex2d4[1][0] < -300 || vertex2d4[1][0] > 300) {
                     elem->display = 0;
+                    free_matrix(vertex2d1, 3);
+                    free_matrix(vertex2d2, 3);
+                    free_matrix(vertex2d3, 3);
+                    free_matrix(vertex2d4, 3);
                     return;
                 }
             }
@@ -260,6 +264,7 @@ void calcul_projection (quad_list *elem, float **m1, float **mx)
     free_matrix(vertex3d2, 3);
     free_matrix(vertex3d3, 3);
     free_matrix(vertex3d4, 3);
+
     free_matrix(vertex2d1, 3);
     free_matrix(vertex2d2, 3);
     free_matrix(vertex2d3, 3);
