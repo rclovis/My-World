@@ -41,7 +41,7 @@ int my_world (int argc, char **argv)
 {
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
-    sfTexture *yes = sfTexture_createFromFile("sand.png", NULL);
+    sfTexture *yes = sfTexture_createFromFile("assets/textures/sand.png", NULL);
     quad_list *root = create_mesh(10, 10, yes);
     sfClock *clock = sfClock_create();
     sfEvent event;
