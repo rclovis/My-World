@@ -7,7 +7,7 @@
 
 CC	=	gcc
 
-CFLAGS	=	-Wall -g3 -O3 -Iinc
+CFLAGS	=	-g3 -O3 -Iinc
 
 LINKER	=	-Llib -lmy -lm\
 			-lcsfml-graphics -lcsfml-window -lcsfml-audio -lcsfml-system
