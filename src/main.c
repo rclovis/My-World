@@ -1,15 +1,15 @@
 /*
 ** EPITECH PROJECT, 2021
-** likedvis
+** my_world
 ** File description:
-** likedvis
+** my_world
 */
 
-#include "../inc/likedvis.h"
+#include "../inc/my_world.h"
 
 int main (int argc, char **argv)
 {
-    return likedvis(argc, argv);
+    return my_world(argc, argv);
 }
 
 global *setup_global (void)
@@ -37,7 +37,7 @@ global *setup_global (void)
     return g;
 }
 
-int likedvis (int argc, char **argv)
+int my_world (int argc, char **argv)
 {
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
