@@ -30,6 +30,7 @@ quad_list *create_mesh (int x, int y, sfTexture *texture);
 quad_list *new_elem (float x, float y, sfTexture *texture);
 
 global *setup_global (void);
+float **view_matrix (void);
 
 void calcul_projection (quad_list *elem, float **m1, float **comb);
 void update_mesh (quad_list *root, float zoom, float x, float z);
@@ -40,9 +41,7 @@ int is_between (sfVector2f p1, sfVector2f p2, sfVector2i m);
 void free_matrix (float **m, int y);
 float **projection_matrix (void);
 void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel);
-float **x_rotation (float r);
-float **zoom_matrix (float zoom);
-float **around_axis (float z);
+float **position_matrix (float x, float z, float zoom);
 
 float **multiply1 (float **m1, float **m2, int ligne_m1, int col_m2);
 float multiply2 (float **m1, float **m2, int x, int y);

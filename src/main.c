@@ -42,37 +42,39 @@ int my_world (int argc, char **argv)
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
     sfTexture *yes = sfTexture_createFromFile("assets/textures/sand.png", NULL);
-    quad_list *root = create_mesh(10, 10, yes);
+    quad_list *root = create_mesh(50, 50, yes);
     sfClock *clock = sfClock_create();
     sfEvent event;
-    int state = 0;
+    int state = 0, refesh = 1;
 
     global *g = setup_global();
 
     float time = 0, zoom = 1, x = 1,  z = 0.3;
 
-    sfRenderWindow_setFramerateLimit(window, 30);
+    sfRenderWindow_setFramerateLimit(window, 15);
     while (sfRenderWindow_isOpen(window)) {
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
         (x >= 6.28 || x <= -6.28) ? x = 0 : 0;
         (z >= 6.28 || z <= -6.28) ? z = 0 : 0;
-        clic_management(&event, root, window, g);
-        if (time > 0.01) {
-            if (event.type == sfEvtKeyPressed) {
+        (clic_management(&event, root, window, g) == 1) ? refesh = 1 : 0;
+        if (time > 0.02) {
+            state = 0;
+            if (event.type == sfEvtKeyPressed ||  event.mouseWheel.type == 8) {
                 state = 1;
+                refesh = 1;
+                zoom += event.mouseWheelScroll.delta * 0.1;
+                event.mouseWheelScroll.delta = 0;
                 (event.key.code == sfKeyUp) ? x -= 0.03 : 0;
                 (event.key.code == sfKeyDown) ? x += 0.03 : 0;
                 (event.key.code == sfKeyRight) ? z -= 0.03 : 0;
                 (event.key.code == sfKeyLeft) ? z += 0.03 : 0;
-            } else {
-                state = 0;
             }
+
             (event.key.code == sfKeyNumpad0) ? g->edit_mode = 0 : 0;
             (event.key.code == sfKeyNumpad1) ? g->edit_mode = 1 : 0;
             (event.key.code == sfKeyNumpad2) ? g->edit_mode = 2 : 0;
-            zoom += event.mouseWheelScroll.delta * 0.1;
-            event.mouseWheelScroll.delta = 0;
-            update_mesh(root, zoom, x, z);
+            (refesh == 1) ? update_mesh(root, zoom, x, z) : 0;
+            refesh = 0;
             root = push_swap(root);
             while (sfRenderWindow_pollEvent(window, &event))
                 (event.type == sfEvtClosed) ? sfRenderWindow_close(window) : 0;
@@ -85,14 +87,17 @@ int my_world (int argc, char **argv)
                     sfRenderWindow_drawVertexArray(window, ptr->strip, NULL);
                 }
             }
+
             sfRenderWindow_drawVertexArray(window, g->bevel, NULL);
             sfRenderWindow_drawVertexArray(window, g->tile, NULL);
             sfRenderWindow_drawCircleShape(window, g->vertex, NULL);
+            sfRenderWindow_display(window);
             sfClock_restart(clock);
         }
 
-        sfRenderWindow_display(window);
     }
+
+    // juste pour tout free
     quad_list *test = root;
     while (root != NULL) {
         test = root;
@@ -111,9 +116,11 @@ int my_world (int argc, char **argv)
     sfCircleShape_destroy(g->vertex);
     free(g);
     sfRenderWindow_destroy(window);
+    //
 
     return 0;
 }
+
 
 quad_list *create_mesh (int x, int y, sfTexture *texture)
 {
@@ -131,8 +138,6 @@ quad_list *create_mesh (int x, int y, sfTexture *texture)
 quad_list *new_elem (float x, float y, sfTexture *texture)
 {
     quad_list *elem = malloc(sizeof(quad_list));
-    elem->array = sfVertexArray_create();
-    sfVertexArray_setPrimitiveType(elem->array, sfQuads);
     elem->n_texture = 0;
     elem->center.x = 0;
     elem->center.y = 0;
@@ -177,6 +182,9 @@ quad_list *new_elem (float x, float y, sfTexture *texture)
     elem->p4[1][0] = y + 50;
     elem->p4[2][0] = 0;
     elem->p4[3] = NULL;
+
+    elem->array = sfVertexArray_create();
+    sfVertexArray_setPrimitiveType(elem->array, sfQuads);
 
     sfVertexArray_append(elem->array, (sfVertex) {(sfVector2f) {x, y}, sfWhite, (sfVector2f) {0, 0}});
     sfVertexArray_append(elem->array, (sfVertex) {(sfVector2f) {x + 50, y}, sfWhite, (sfVector2f) {0, 160}});
@@ -273,12 +281,13 @@ void calcul_projection (quad_list *elem, float **m1, float **mx)
 
 void update_mesh (quad_list *root, float zoom, float x, float z)
 {
-    float **mx = combine(combine(x_rotation(x), around_axis(z)), zoom_matrix(zoom));
+    float **mx = position_matrix(x, z, zoom);
     float **temp = projection_matrix();
     float **proj = multiply1(temp, mx, 3, 3);
     for (quad_list *ptr = root;ptr != NULL; ptr = ptr->next) {
         calcul_projection(ptr, proj, mx);
         ptr->nbr = sqrt(pow(ptr->center.x, 2) + pow(ptr->center.y, 2) + pow(ptr->center.z - 300, 2));
+
     }
     free_matrix(mx, 3);
     free_matrix(proj, 3);

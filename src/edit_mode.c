@@ -102,4 +102,5 @@ int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, gl
     if (g->edit_mode == 2)
         raise_tile(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
     event->type = 0;
+    return 1;
 }
