@@ -32,7 +32,6 @@ struct quad_list {
     float **p1;
     float **p2;
     float **p3;
-    float **p4;
     int display;
 	int nbr;
     int n_texture;

@@ -39,10 +39,20 @@ struct global {
     sfCircleShape *vertex;
 	sfVertexArray *bevel;
 	sfVertexArray *tile;
+	int edit_mode;
+	int toggle;
 	int apply_mode;
 
 	// toolbar
 	toolbar_t *tb;
+};
+
+typedef struct linked_vertex linked_vertex;
+struct linked_vertex {
+	float x;
+	float y;
+	float z;
+	linked_vertex *next;
 };
 
 int my_world(int argc, char **argv);
@@ -69,11 +79,23 @@ float multiply2 (float **m1, float **m2, int x, int y);
 float **combine (float **m1, float **m2);
 
 int is_in_triangle (sfVector2i pt, sfVector2f v1, sfVector2f v2, sfVector2f v3);
-void raise_vertex (quad_list *root, sfVector2i m, int button);
+void raise_vertex (quad_list *root, sfVector2i m, int button, float strengh);
 void place_tile (quad_list *root, sfVector2i m, sfVertexArray *tile);
-void raise_line (quad_list *root, sfVector2i m, int button);
-void raise_tile (quad_list *root, sfVector2i m, int button);
+void raise_line (quad_list *root, sfVector2i m, int button, float strengh);
+void raise_tile (quad_list *root, sfVector2i m, int button, float strengh);
+void raise_zone (quad_list *root, sfVector2i m, int button, float strengh);
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g);
+
+// test import .obj
+quad_list *add_object (quad_list *root, char *file, sfVector2f pos);
+linked_vertex *hook_vertex (linked_vertex *root, int i);
+long long my_getnbr2 (const char *str);
+linked_vertex *get_vertex (char **object);
+char **file_str (char *file_name);
+float **zoom_matrix (float zoom);
+float **x_rotation (float r);
+float **c_matrix (void);
+//
 
 // Toolbar
 toolbar_t *setup_toolbar(void);
