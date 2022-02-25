@@ -29,11 +29,6 @@ void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c)
             free(p);
             return;
         }
-        if (approximation(p[3].x, m.x, 10) && approximation(p[3].y, m.y, 10)) {
-            sfCircleShape_setPosition(c, (sfVector2f) {p[3].x, p[3].y});
-            free(p);
-            return;
-        }
     }
     sfCircleShape_setPosition(c, (sfVector2f) {-100, -100});
     free(p);
@@ -61,15 +56,8 @@ void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel)
             return;
         }
 
-        if (is_between(p[2], p[3], m)) {
+        if (is_between(p[2], p[0], m)) {
             sfVertexArray_getVertex(bevel, 0)->position = p[2];
-            sfVertexArray_getVertex(bevel, 1)->position = p[3];
-            free(p);
-            return;
-        }
-
-        if (is_between(p[3], p[0], m)) {
-            sfVertexArray_getVertex(bevel, 0)->position = p[3];
             sfVertexArray_getVertex(bevel, 1)->position = p[0];
             free(p);
             return;
@@ -88,12 +76,11 @@ void place_tile (quad_list *root, sfVector2i m, sfVertexArray *tile)
         for (int i = 0;i < 4;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
 
-        if (is_in_triangle(m, p[3], p[0], p[1]) || is_in_triangle(m, p[1], p[2], p[3])) {
+        if (is_in_triangle(m, p[0], p[1], p[2])) {
             sfVertexArray_getVertex(tile, 0)->position = p[0];
             sfVertexArray_getVertex(tile, 1)->position = p[1];
             sfVertexArray_getVertex(tile, 2)->position = p[2];
-            sfVertexArray_getVertex(tile, 3)->position = p[3];
-            sfVertexArray_getVertex(tile, 4)->position = p[0];
+            sfVertexArray_getVertex(tile, 3)->position = p[0];
             free(p);
             return;
         }
@@ -102,7 +89,6 @@ void place_tile (quad_list *root, sfVector2i m, sfVertexArray *tile)
     sfVertexArray_getVertex(tile, 1)->position = (sfVector2f) {-100, -100};
     sfVertexArray_getVertex(tile, 2)->position = (sfVector2f) {-100, -100};
     sfVertexArray_getVertex(tile, 3)->position = (sfVector2f) {-100, -100};
-    sfVertexArray_getVertex(tile, 4)->position = (sfVector2f) {-100, -100};
     free(p);
 }
 
@@ -122,7 +108,7 @@ int is_between (sfVector2f p1, sfVector2f p2, sfVector2i m)
 {
     sfVector2f v1 = {p2.x - p1.x, p2.y - p1.y};
     sfVector2f v2 = {m.x - p1.x, m.y - p1.y};
-    if (approximation(v1.x * v2.y - v1.y * v2.x, 0, 500) == 0)
+    if (approximation(v1.x * v2.y - v1.y * v2.x, 0, 5 * sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2))) == 0)
         return (0);
     if (0 < v1.x * v2.x + v1.y * v2.y  && v1.x * v2.x + v1.y * v2.y < v1.x * v1.x + v1.y * v1.y)
         return (1);
