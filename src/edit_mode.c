@@ -95,10 +95,10 @@ int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, gl
     if (event->type != sfEvtMouseButtonReleased)
         return 0;
     if (g->tb->edit_mode == 0)
-        raise_vertex(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
+        raise_vertex(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 1);
     if (g->tb->edit_mode == 1)
-        raise_line(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
+        raise_line(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 1);
     if (g->tb->edit_mode == 2)
-        raise_tile(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
+        raise_tile(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 1);
     return 1;
 }

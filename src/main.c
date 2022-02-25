@@ -32,7 +32,6 @@ global *setup_global (void)
     sfVertexArray_append(g->tile, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
     sfVertexArray_append(g->tile, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
     sfVertexArray_append(g->tile, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
-    sfVertexArray_append(g->tile, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
 
     // TOOLBAR: Sprite & Texture
     g->tb = setup_toolbar();
@@ -45,8 +44,8 @@ int my_world (int argc, char **argv)
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
     sfTexture *yes = sfTexture_createFromFile("assets/textures/sand.png", NULL);
-    // quad_list *root = create_mesh(1, 1, yes);
-    quad_list *root = add_object(root, "src/field.obj", (sfVector2f) {0, 0});
+    quad_list *root = create_mesh(50, 50, yes);
+    // quad_list *root = add_object(root, "src/field.obj", (sfVector2f) {0, 0});
     sfClock *clock = sfClock_create();
     sfEvent event;
     int state = 0, refesh = 1;
