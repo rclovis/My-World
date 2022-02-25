@@ -15,6 +15,25 @@
 	#include <SFML/Graphics.h>
 	#include "my.h"
 
+/*
+	sprite = toolbar sprite
+	icons = toolbar icons
+	editmode = position of the cursor in toolbar + tells which mode is selected
+	nb_icons = length in "icons"
+	view_toggle = toggle var to show/hide toolbar
+*/
+typedef struct toolbar {
+	sfSprite *sprite;
+	sfSprite **icons;
+	sfFloatRect *icons_rect;
+	int edit_mode;
+	int nb_icons;
+	int view_toggle;
+} toolbar_t;
+
+/*
+	sfsprite *toolbar : sprite de la barre d'outil
+*/
 typedef struct global global;
 struct global {
     sfCircleShape *vertex;
@@ -23,6 +42,9 @@ struct global {
 	int edit_mode;
 	int toggle;
 	int apply_mode;
+
+	// toolbar
+	toolbar_t *tb;
 };
 
 typedef struct linked_vertex linked_vertex;
@@ -64,7 +86,6 @@ void raise_tile (quad_list *root, sfVector2i m, int button, float strengh);
 void raise_zone (quad_list *root, sfVector2i m, int button, float strengh);
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g);
 
-
 // test import .obj
 quad_list *add_object (quad_list *root, char *file, sfVector2f pos);
 linked_vertex *hook_vertex (linked_vertex *root, int i);
@@ -73,9 +94,13 @@ linked_vertex *get_vertex (char **object);
 char **file_str (char *file_name);
 float **zoom_matrix (float zoom);
 float **x_rotation (float r);
-
-
 float **c_matrix (void);
 //
+
+// Toolbar
+toolbar_t *setup_toolbar(void);
+void toggle_toolbar_visibility(toolbar_t *tb);
+void render_toolbar(sfRenderWindow *win, toolbar_t *tb);
+void move_toolbar_cursor(toolbar_t *tb, int new_mode);
 
 #endif

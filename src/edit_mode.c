@@ -92,30 +92,13 @@ void raise_zone (quad_list *root, sfVector2i m, int button, float strengh)
 
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g)
 {
-    if (event->type  == sfEvtMouseButtonPressed)
-        g->toggle = 1;
-    if (event->type  == sfEvtMouseButtonReleased)
-        g->toggle = 0;
-    if (g->toggle == 0) {
-        place_circle(root, (sfVector2i) {-100, -100}, g->vertex);
-        place_line(root, (sfVector2i) {-100, -100}, g->bevel);
-        place_tile(root, (sfVector2i) {-100, -100}, g->tile);
-        if (g->edit_mode == 0)
-            place_circle(root, sfMouse_getPositionRenderWindow(window), g->vertex);
-        if (g->edit_mode == 1)
-            place_line(root, sfMouse_getPositionRenderWindow(window), g->bevel);
-        if (g->edit_mode == 2)
-            place_tile(root, sfMouse_getPositionRenderWindow(window), g->tile);
+    if (event->type != sfEvtMouseButtonReleased)
         return 0;
-    }
-    if (g->edit_mode == 0)
-        raise_vertex(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 0.01);
-    if (g->edit_mode == 1)
-        raise_line(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 0.01);
-    if (g->edit_mode == 2)
-        raise_tile(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 0.01);
-    if (g->edit_mode == 3)
-        raise_zone(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 0.5);
-    event->type = 0;
+    if (g->tb->edit_mode == 0)
+        raise_vertex(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
+    if (g->tb->edit_mode == 1)
+        raise_line(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
+    if (g->tb->edit_mode == 2)
+        raise_tile(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
     return 1;
 }
