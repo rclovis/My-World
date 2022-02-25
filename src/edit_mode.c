@@ -83,24 +83,13 @@ void raise_tile (quad_list *root, sfVector2i m, int button)
 
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g)
 {
-    if (event->type != sfEvtMouseButtonReleased) {
-        place_circle(root, (sfVector2i) {-100, -100}, g->vertex);
-        place_line(root, (sfVector2i) {-100, -100}, g->bevel);
-        place_tile(root, (sfVector2i) {-100, -100}, g->tile);
-        if (g->edit_mode == 0)
-            place_circle(root, sfMouse_getPositionRenderWindow(window), g->vertex);
-        if (g->edit_mode == 1)
-            place_line(root, sfMouse_getPositionRenderWindow(window), g->bevel);
-        if (g->edit_mode == 2)
-            place_tile(root, sfMouse_getPositionRenderWindow(window), g->tile);
+    if (event->type != sfEvtMouseButtonReleased)
         return 0;
-    }
-    if (g->edit_mode == 0)
+    if (g->tb->edit_mode == 0)
         raise_vertex(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
-    if (g->edit_mode == 1)
+    if (g->tb->edit_mode == 1)
         raise_line(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
-    if (g->edit_mode == 2)
+    if (g->tb->edit_mode == 2)
         raise_tile(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button);
-    event->type = 0;
     return 1;
 }
