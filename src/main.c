@@ -15,7 +15,6 @@ int main (int argc, char **argv)
 global *setup_global (void)
 {
     global *g = malloc(sizeof(global));
-    g->edit_mode = 0;
     g->apply_mode = 0;
     g->vertex = sfCircleShape_create();
     sfCircleShape_setRadius(g->vertex, 5);
@@ -34,6 +33,10 @@ global *setup_global (void)
     sfVertexArray_append(g->tile, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
     sfVertexArray_append(g->tile, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
     sfVertexArray_append(g->tile, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
+
+    // TOOLBAR: Sprite & Texture
+    g->tb = setup_toolbar();
+
     return g;
 }
 
@@ -51,13 +54,70 @@ int my_world (int argc, char **argv)
 
     float time = 0, zoom = 1, x = 1,  z = 0.3;
 
+    // GAME LOOP
     sfRenderWindow_setFramerateLimit(window, 15);
     while (sfRenderWindow_isOpen(window)) {
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
         (x >= 6.28 || x <= -6.28) ? x = 0 : 0;
         (z >= 6.28 || z <= -6.28) ? z = 0 : 0;
-        (clic_management(&event, root, window, g) == 1) ? refesh = 1 : 0;
+
+        // SELCTION HOVER
+        place_circle(root, (sfVector2i) {-100, -100}, g->vertex);
+        place_line(root, (sfVector2i) {-100, -100}, g->bevel);
+        place_tile(root, (sfVector2i) {-100, -100}, g->tile);
+        if (g->tb->edit_mode == 0)
+            place_circle(root, sfMouse_getPositionRenderWindow(window), g->vertex);
+        if (g->tb->edit_mode == 1)
+            place_line(root, sfMouse_getPositionRenderWindow(window), g->bevel);
+        if (g->tb->edit_mode == 2)
+            place_tile(root, sfMouse_getPositionRenderWindow(window), g->tile);
+
+        // EVENT POLL
+        while (sfRenderWindow_pollEvent(window, &event)) {
+
+            if (event.type == sfEvtMouseButtonReleased)
+                if (sfFloatRect_contains(&g->tb->icons_rect[1], event.mouseButton.x, event.mouseButton.y)) {
+                    move_toolbar_cursor(g->tb, 0);
+                    g->tb->edit_mode = 0;
+                }
+                else if (sfFloatRect_contains(&g->tb->icons_rect[2], event.mouseButton.x, event.mouseButton.y)) {
+                    move_toolbar_cursor(g->tb, 1);
+                    g->tb->edit_mode = 1;
+                }
+                else if (sfFloatRect_contains(&g->tb->icons_rect[3], event.mouseButton.x, event.mouseButton.y)) {
+                    move_toolbar_cursor(g->tb, 2);
+                    g->tb->edit_mode = 2;
+                }
+                else
+                    (clic_management(&event, root, window, g) == 1) ? refesh = 1 : 0;
+
+            if (event.type == sfEvtKeyPressed) {
+                switch (event.key.code) {
+                case sfKeyP:
+                    toggle_toolbar_visibility(g->tb);
+                    break;
+                case sfKeyNum1:
+                    move_toolbar_cursor(g->tb, 0);
+                    g->tb->edit_mode = 0;
+                    break;
+                case sfKeyNum2:
+                    move_toolbar_cursor(g->tb, 1);
+                    g->tb->edit_mode = 1;
+                    break;
+                case sfKeyNum3:
+                    move_toolbar_cursor(g->tb, 2);
+                    g->tb->edit_mode = 2;
+                    break;
+                default:
+                    break;
+                }
+            }
+            (event.type == sfEvtClosed) ? sfRenderWindow_close(window) : 0;
+        }
+
+        // TIME LOOP
         if (time > 0.02) {
+            sfRenderWindow_clear(window, sfBlue);
             state = 0;
             if (event.type == sfEvtKeyPressed ||  event.mouseWheel.type == 8) {
                 state = 1;
@@ -69,16 +129,9 @@ int my_world (int argc, char **argv)
                 (event.key.code == sfKeyRight) ? z -= 0.03 : 0;
                 (event.key.code == sfKeyLeft) ? z += 0.03 : 0;
             }
-
-            (event.key.code == sfKeyNumpad0) ? g->edit_mode = 0 : 0;
-            (event.key.code == sfKeyNumpad1) ? g->edit_mode = 1 : 0;
-            (event.key.code == sfKeyNumpad2) ? g->edit_mode = 2 : 0;
             (refesh == 1) ? update_mesh(root, zoom, x, z) : 0;
             refesh = 0;
             root = push_swap(root);
-            while (sfRenderWindow_pollEvent(window, &event))
-                (event.type == sfEvtClosed) ? sfRenderWindow_close(window) : 0;
-            sfRenderWindow_clear(window, sfBlue);
 
             for (quad_list *ptr = root;ptr != NULL; ptr = ptr->next) {
                 if (ptr->display == 1) {
@@ -87,17 +140,17 @@ int my_world (int argc, char **argv)
                     sfRenderWindow_drawVertexArray(window, ptr->strip, NULL);
                 }
             }
-
             sfRenderWindow_drawVertexArray(window, g->bevel, NULL);
             sfRenderWindow_drawVertexArray(window, g->tile, NULL);
             sfRenderWindow_drawCircleShape(window, g->vertex, NULL);
+            render_toolbar(window, g->tb);
             sfRenderWindow_display(window);
             sfClock_restart(clock);
         }
 
     }
 
-    // juste pour tout free
+    // FREE ZONE
     quad_list *test = root;
     while (root != NULL) {
         test = root;
