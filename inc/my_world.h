@@ -97,6 +97,19 @@ float **x_rotation (float r);
 float **c_matrix (void);
 //
 
+//save & load files
+char *float_to_str (double nbr);
+quad_list *loat_file (quad_list *root, char *file);
+int save_file (quad_list *root, char *name);
+int save_points (quad_list *ptr, FILE *stream);
+
+
+int my_item_count(const char *str, char sep);
+int get_item_end(const char *str, char sep);
+char **my_2d_array_str_split(const char *str, char sep);
+char *my_strndup(const char *src, size_t n);
+char *my_strncpy(char *dest, const char *src, size_t n);
+
 // Toolbar
 toolbar_t *setup_toolbar(void);
 void toggle_toolbar_visibility(toolbar_t *tb);

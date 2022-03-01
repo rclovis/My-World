@@ -36,6 +36,7 @@ struct quad_list {
 	int nbr;
     int n_texture;
 	sfVector3f center;
+	sfVector3f n;
 	sfRenderStates *render;
 	quad_list *next;
 };

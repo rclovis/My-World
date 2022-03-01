@@ -92,13 +92,15 @@ void raise_zone (quad_list *root, sfVector2i m, int button, float strengh)
 
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g)
 {
+    sfVector2f mpos2 = sfRenderWindow_mapPixelToCoords(window, sfMouse_getPositionRenderWindow(window), NULL);
+    sfVector2i m = {mpos2.x, mpos2.y};
     if (event->type != sfEvtMouseButtonReleased)
         return 0;
     if (g->tb->edit_mode == 0)
-        raise_vertex(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 1);
+        raise_vertex(root, m, event->mouseButton.button, 1);
     if (g->tb->edit_mode == 1)
-        raise_line(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 1);
+        raise_line(root, m, event->mouseButton.button, 1);
     if (g->tb->edit_mode == 2)
-        raise_tile(root, sfMouse_getPositionRenderWindow(window), event->mouseButton.button, 1);
+        raise_tile(root, m, event->mouseButton.button, 1);
     return 1;
 }

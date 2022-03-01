@@ -44,8 +44,13 @@ int my_world (int argc, char **argv)
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
     sfTexture *yes = sfTexture_createFromFile("assets/textures/sand.png", NULL);
-    quad_list *root = create_mesh(50, 50, yes);
-    // quad_list *root = add_object(root, "src/field.obj", (sfVector2f) {0, 0});
+    // quad_list *root = create_mesh(50, 50, yes);
+    quad_list *root = add_object(root, "assets/3d_objects/untitledi.obj", (sfVector2f) {0, 0});
+    // root = add_object(root, "assets/3d_objects/detail_treeLarge.obj", (sfVector2f) {5, 5});
+
+    // quad_list *root = loat_file(root, "save_test");
+    // save_file(root, "save_test");
+
     sfClock *clock = sfClock_create();
     sfEvent event;
     int state = 0, refesh = 1;
@@ -143,15 +148,6 @@ int my_world (int argc, char **argv)
                     sfRenderWindow_drawVertexArray(window, ptr->strip, NULL);
                 }
             }
-
-            // quad_list *ptr = root;
-            // for (int i = 0;i < 1150; ptr = ptr->next, i++) {
-            //     if (ptr->display == 1) {
-            //         // if (state == 0)
-            //         sfRenderWindow_drawVertexArray(window, ptr->array, ptr->render);
-            //         sfRenderWindow_drawVertexArray(window, ptr->strip, NULL);
-            //     }
-            // }
 
             sfRenderWindow_drawVertexArray(window, g->bevel, NULL);
             sfRenderWindow_drawVertexArray(window, g->tile, NULL);
@@ -332,12 +328,25 @@ quad_list *new_elem (float x, float y, sfTexture *texture)
     return elem;
 }
 
-
 void calcul_projection (quad_list *elem, float **m1, float **mx)
 {
     float **vertex2d1 = multiply1(m1, elem->p1, 2, 1);
     float **vertex2d2 = multiply1(m1, elem->p2, 2, 1);
     float **vertex2d3 = multiply1(m1, elem->p3, 2, 1);
+
+    sfVector3f a = {elem->p1[0][0] - elem->p2[0][0], elem->p1[1][0] - elem->p2[1][0], elem->p1[2][0] - elem->p2[2][0]};
+    sfVector3f b = {elem->p3[0][0] - elem->p2[0][0], elem->p3[1][0] - elem->p2[1][0], elem->p3[2][0] - elem->p2[2][0]};
+
+    elem->n.x = a.y * b.z - a.z * b.y;
+    elem->n.y = a.z * b.x - a.x * b.z;
+    elem->n.z = a.x * b.y - a.y * b.x;
+
+    float oo = elem->n.x * 500 + elem->n.y * 0 + elem->n.z * -500;
+
+    // sfVertexArray_getVertex(elem->array, 0)->color = sfColor_fromRGB(oo, oo, oo);
+    // sfVertexArray_getVertex(elem->array, 1)->color = sfColor_fromRGB(oo, oo, oo);
+    // sfVertexArray_getVertex(elem->array, 2)->color = sfColor_fromRGB(oo, oo, oo);
+
 
     sfVertexArray_getVertex(elem->array, 0)->position.x = vertex2d1[0][0] + 400;
     sfVertexArray_getVertex(elem->array, 0)->position.y = vertex2d1[1][0] + 300;
@@ -373,6 +382,7 @@ void calcul_projection (quad_list *elem, float **m1, float **mx)
             }
         }
     }
+
     elem->display = 1;
 
     float **vertex3d1 = multiply1(mx, elem->p1, 3, 1);
@@ -405,8 +415,6 @@ void update_mesh (quad_list *root, float zoom, float x, float z)
     for (quad_list *ptr = root;ptr != NULL; ptr = ptr->next) {
         calcul_projection(ptr, proj, mx);
         ptr->nbr = sqrt(pow(ptr->center.x, 2) + pow(ptr->center.y, 2) + pow(ptr->center.z - (1000 * 1 / zoom), 2));
-        // if (ptr->n_texture == 333)
-        // printf("%d\n", ptr->nbr);
     }
     free_matrix(mx, 3);
     free_matrix(proj, 3);
