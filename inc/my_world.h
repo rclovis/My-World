@@ -7,6 +7,7 @@
 
 #ifndef my_world_H_
     #define my_world_H_
+
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <unistd.h>
@@ -14,6 +15,21 @@
 	#include <SFML/Audio.h>
 	#include <SFML/Graphics.h>
 	#include "my.h"
+
+/*
+	clock = fps own clock, reset every 1 second
+	font = font used for display
+	text = text used for display
+	frames = number of frames ellapsed
+	buffer = retrieve string equivalent of 'frames'
+*/
+typedef struct fps {
+	sfClock *clock;
+	sfFont *font;
+	sfText *text;
+	char buffer[10];
+	int frames;
+} fps_t;
 
 /*
 	sprite = toolbar sprite
@@ -45,6 +61,9 @@ struct global {
 
 	// toolbar
 	toolbar_t *tb;
+
+	// fps
+	fps_t *fps;
 };
 
 typedef struct linked_vertex linked_vertex;
@@ -102,5 +121,9 @@ toolbar_t *setup_toolbar(void);
 void toggle_toolbar_visibility(toolbar_t *tb);
 void render_toolbar(sfRenderWindow *win, toolbar_t *tb);
 void move_toolbar_cursor(toolbar_t *tb, int new_mode);
+
+// FPS
+void display_fps(fps_t *fps);
+fps_t *fps_init(void);
 
 #endif

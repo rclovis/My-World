@@ -36,6 +36,9 @@ global *setup_global (void)
     // TOOLBAR: Sprite & Texture
     g->tb = setup_toolbar();
 
+    // FPS: clock text font counter
+    g->fps = fps_init();
+
     return g;
 }
 
@@ -54,11 +57,12 @@ int my_world (int argc, char **argv)
 
     float time = 0, zoom = 1, x = 1,  z = 0.3;
 
-
     // GAME LOOP
     sfRenderWindow_setFramerateLimit(window, 30);
-
     while (sfRenderWindow_isOpen(window)) {
+
+        display_fps(g->fps);
+
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
         (x >= 6.28 || x <= -6.28) ? x = 0 : 0;
         (z >= 6.28 || z <= -6.28) ? z = 0 : 0;
@@ -119,6 +123,7 @@ int my_world (int argc, char **argv)
 
         // TIME LOOP
         if (time > 0.02) {
+            g->fps->frames++;
             sfRenderWindow_clear(window, sfBlue);
             state = 0;
             if (event.type == sfEvtKeyPressed ||  event.mouseWheel.type == 8) {
@@ -153,6 +158,7 @@ int my_world (int argc, char **argv)
             //     }
             // }
 
+            sfRenderWindow_drawText(window, g->fps->text, NULL);
             sfRenderWindow_drawVertexArray(window, g->bevel, NULL);
             sfRenderWindow_drawVertexArray(window, g->tile, NULL);
             sfRenderWindow_drawCircleShape(window, g->vertex, NULL);
