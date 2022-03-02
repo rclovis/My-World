@@ -12,6 +12,7 @@ void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c)
     sfVector2f p1, p2, p3, p4;
     sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
     for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
+        if (ptr->display == 0) continue;
         for (int i = 0;i < 4;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
         if (approximation(p[0].x, m.x, 10) && approximation(p[0].y, m.y, 10)) {
