@@ -83,11 +83,11 @@ quad_list *loat_file (quad_list *root, char *file)
 {
     char **object = file_str(file);
     quad_list *ptr = NULL;
-    sfTexture *yes = sfTexture_createFromFile("assets/textures/sand.png", NULL);
+    sfTexture *yes = sfTexture_createFromFile("assets/textures/textures.png", NULL);
     char **t = NULL;
     for (int i = 0;object[i] != NULL;i++) {
         t = my_2d_array_str_split(&object[i][2], ' ');
-        ptr = new_elem(0, 0, NULL);
+        ptr = tri_one(0, 0, 0 ,NULL);
         sfVertexArray_getVertex(ptr->array, 0)->texCoords.x = my_getnbr2(t[9]);
         sfVertexArray_getVertex(ptr->array, 0)->texCoords.y = my_getnbr2(t[10]);
         sfVertexArray_getVertex(ptr->array, 1)->texCoords.x = my_getnbr2(t[11]);
@@ -97,6 +97,7 @@ quad_list *loat_file (quad_list *root, char *file)
         for (int i = 0;i < 3;ptr->p1[i][0] = atof(t[i]), i++);
         for (int i = 0;i < 3;ptr->p2[i][0] = atof(t[i + 3]), i++);
         for (int i = 0;i < 3;ptr->p3[i][0] = atof(t[i + 6]), i++);
+        ptr->n_texture = my_getnbr2(t[15]);
         ptr->render->texture = yes;
         ptr->next = root;
         root = ptr;

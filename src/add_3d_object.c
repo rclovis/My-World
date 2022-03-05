@@ -149,27 +149,28 @@ linked_vertex *hook_vertex (linked_vertex *root, int i)
     return ptr;
 }
 
-quad_list *add_object (quad_list *root, char *file, sfVector2f pos)
+quad_list *add_object (quad_list *root, char *file, sfVector3f pos)
 {
     char **object = file_str(file);
     quad_list *ptr = NULL;
-    sfTexture *yes = sfTexture_createFromFile("assets/textures/sand.png", NULL);
+    sfTexture *yes = sfTexture_createFromFile("assets/textures/textures.png", NULL);
     char **temp = NULL;
-    float **zoom = multiply1(x_rotation(1.57), zoom_matrix(10), 3, 3);
+    float **zoom = multiply1(x_rotation(1.57), zoom_matrix(15), 3, 3);
     float **temp4 = NULL;
     linked_vertex *vertex_list = get_vertex(object), *hook = NULL;
     for (int i = 0;object[i] != NULL;i++) {
         if (object[i][0] == 'f') {
             temp = my_2d_array_str_split(&object[i][2], ' ');
-            ptr = new_elem(0, 0, NULL);
+            // ptr = new_elem(0, 0, NULL, (sfVector3f) {0, 0, 0});
+            ptr = tri_one(0, 0, 0, NULL);
 
-            sfVertexArray_getVertex(ptr->array, 0)->color = sfGreen;
-            sfVertexArray_getVertex(ptr->array, 1)->color = sfGreen;
-            sfVertexArray_getVertex(ptr->array, 2)->color = sfGreen;
+            sfVertexArray_getVertex(ptr->array, 0)->color = sfRed;
+            sfVertexArray_getVertex(ptr->array, 1)->color = sfRed;
+            sfVertexArray_getVertex(ptr->array, 2)->color = sfRed;
 
             hook = hook_vertex(vertex_list, my_getnbr2(temp[0]));
             ptr->p1[0][0] = hook->x + pos.x;
-            ptr->p1[1][0] = hook->y + 2;
+            ptr->p1[1][0] = hook->y + pos.z;
             ptr->p1[2][0] = hook->z + pos.y;
 
             temp4 = multiply1(zoom, ptr->p1, 3, 1);
@@ -178,7 +179,7 @@ quad_list *add_object (quad_list *root, char *file, sfVector2f pos)
 
             hook = hook_vertex(vertex_list, my_getnbr2(temp[1]));
             ptr->p2[0][0] = hook->x + pos.x;
-            ptr->p2[1][0] = hook->y + 2;
+            ptr->p2[1][0] = hook->y + pos.z;
             ptr->p2[2][0] = hook->z + pos.y;
 
             temp4 = multiply1(zoom, ptr->p2, 3, 1);
@@ -187,7 +188,7 @@ quad_list *add_object (quad_list *root, char *file, sfVector2f pos)
 
             hook = hook_vertex(vertex_list, my_getnbr2(temp[2]));
             ptr->p3[0][0] = hook->x + pos.x;
-            ptr->p3[1][0] = hook->y + 2;
+            ptr->p3[1][0] = hook->y + pos.z;
             ptr->p3[2][0] = hook->z + pos.y;
 
             temp4 = multiply1(zoom, ptr->p3, 3, 1);

@@ -54,24 +54,6 @@ void raise_line (quad_list *root, sfVector2i m, int button, float strengh)
     free(p);
 }
 
-void raise_tile (quad_list *root, sfVector2i m, int button, float strengh)
-{
-    sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
-    float a = 0, b = 0;
-    for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
-        for (int i = 0;i < 3;i++)
-            p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
-        if (is_in_triangle(m, p[0], p[1], p[2])) {
-            raise_vertex(root, (sfVector2i) {p[0].x, p[0].y}, button, strengh);
-            raise_vertex(root, (sfVector2i) {p[1].x, p[1].y}, button, strengh);
-            raise_vertex(root, (sfVector2i) {p[2].x, p[2].y}, button, strengh);
-            free(p);
-            return;
-        }
-    }
-    free(p);
-}
-
 void raise_zone (quad_list *root, sfVector2i m, int button, float strengh)
 {
     sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
@@ -90,6 +72,52 @@ void raise_zone (quad_list *root, sfVector2i m, int button, float strengh)
     free(p);
 }
 
+void raise_tile (quad_list *root, sfVector2i m, int button, float strengh)
+{
+    sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
+    float a = 0, b = 0;
+    for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
+        for (int i = 0;i < 3;i++)
+            p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
+        if (is_in_triangle(m, p[0], p[1], p[2])) {
+            raise_vertex(root, (sfVector2i) {p[0].x, p[0].y}, button, strengh);
+            raise_vertex(root, (sfVector2i) {p[1].x, p[1].y}, button, strengh);
+            raise_vertex(root, (sfVector2i) {p[2].x, p[2].y}, button, strengh);
+            free(p);
+            return;
+        }
+    }
+    free(p);
+}
+
+void change_texture (quad_list *root, sfVector2i m, int button)
+{
+    sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
+    float a = 0, b = 0;
+    (button != 1) ? button = -1 : 0;
+    for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
+        for (int i = 0;i < 3;i++)
+            p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
+        if (is_in_triangle(m, p[0], p[1], p[2])) {
+            ptr->n_texture += button;
+            if (ptr->n_texture == -1) {
+                ptr->n_texture = 25;
+                button = 25;
+            }
+            if (ptr->n_texture == 26) {
+                ptr->n_texture = 0;
+                button = -25;
+            }
+            sfVertexArray_getVertex(ptr->array, 0)->texCoords.x += 48 * button;
+            sfVertexArray_getVertex(ptr->array, 1)->texCoords.x += 48 * button;
+            sfVertexArray_getVertex(ptr->array, 2)->texCoords.x += 48 * button;
+            free(p);
+            return;
+        }
+    }
+    free(p);
+}
+
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g)
 {
     sfVector2f mpos2 = sfRenderWindow_mapPixelToCoords(window, sfMouse_getPositionRenderWindow(window), NULL);
@@ -102,5 +130,9 @@ int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, gl
         raise_line(root, m, event->mouseButton.button, 1);
     if (g->tb->edit_mode == 2)
         raise_tile(root, m, event->mouseButton.button, 1);
+    if (g->tb->edit_mode == 3)
+        raise_zone(root, m, event->mouseButton.button, 10);
+    if (g->tb->edit_mode == 4)
+        change_texture(root, m, event->mouseButton.button);
     return 1;
 }

@@ -58,6 +58,8 @@ struct global {
 	int edit_mode;
 	int toggle;
 	int apply_mode;
+	int refresh;
+	int state;
 
 	// toolbar
 	toolbar_t *tb;
@@ -74,10 +76,13 @@ struct linked_vertex {
 	linked_vertex *next;
 };
 
-int my_world(int argc, char **argv);
+int my_world (int argc, char **argv, sfRenderWindow *window);
 
-quad_list *create_mesh (int x, int y, sfTexture *texture);
-quad_list *new_elem (float x, float y, sfTexture *texture);
+quad_list *create_mesh (int x, int y, sfVector3f pos, quad_list *root);
+quad_list *tri_one (float x, float y, float z, sfTexture *texture);
+quad_list *tri_two (float x, float y, float z, sfTexture *texture);
+void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *window);
+float **point_matrix (float x, float y, float z);
 
 global *setup_global (void);
 float **view_matrix (void);
@@ -89,6 +94,7 @@ void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c);
 int is_between (sfVector2f p1, sfVector2f p2, sfVector2i m);
 
 void free_matrix (float **m, int y);
+int free_quad_list (quad_list *root);
 float **projection_matrix (void);
 void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel);
 float **position_matrix (float x, float z, float zoom);
@@ -103,10 +109,11 @@ void place_tile (quad_list *root, sfVector2i m, sfVertexArray *tile);
 void raise_line (quad_list *root, sfVector2i m, int button, float strengh);
 void raise_tile (quad_list *root, sfVector2i m, int button, float strengh);
 void raise_zone (quad_list *root, sfVector2i m, int button, float strengh);
+void change_texture (quad_list *root, sfVector2i m, int button);
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g);
 
 // test import .obj
-quad_list *add_object (quad_list *root, char *file, sfVector2f pos);
+quad_list *add_object (quad_list *root, char *file, sfVector3f pos);
 linked_vertex *hook_vertex (linked_vertex *root, int i);
 long long my_getnbr2 (const char *str);
 linked_vertex *get_vertex (char **object);
@@ -138,5 +145,9 @@ void move_toolbar_cursor(toolbar_t *tb, int new_mode);
 // FPS
 void display_fps(fps_t *fps);
 fps_t *fps_init(void);
+
+int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem);
+sfRenderWindow *spinning_menu (int v);
+int compute_centre (float **mx, quad_list *elem);
 
 #endif
