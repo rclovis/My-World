@@ -16,6 +16,31 @@
 	#include <SFML/Graphics.h>
 	#include "my.h"
 
+	#define	ENTER 				14
+	#define	BACKSPACE			8
+	#define INPUT_BUFFER_SIZE	25
+
+/*
+	sprite = button's sprite
+	texture = button's texture
+	text = button's label
+*/
+typedef struct button {
+	sfTexture *texture;
+	sfSprite *sprite;
+	sfIntRect rect;
+	sfText *text;
+} button_t;
+
+/*
+	buttons = array containing all menu's buttons
+	font = font used in this menu
+*/
+typedef struct menu {
+	button_t **buttons;
+	sfFont *font;
+} menu_t;
+
 /*
 	clock = fps own clock, reset every 1 second
 	font = font used for display
@@ -66,6 +91,16 @@ struct global {
 
 	// fps
 	fps_t *fps;
+
+	// menu
+	int curr_menu;
+	int will_type;
+	int is_typing;
+	int cursor;
+	char input_buffer[INPUT_BUFFER_SIZE];
+	menu_t *main_menu;
+	menu_t *pause_menu;
+	menu_t *input_menu;
 };
 
 typedef struct linked_vertex linked_vertex;
@@ -146,8 +181,21 @@ void move_toolbar_cursor(toolbar_t *tb, int new_mode);
 void display_fps(fps_t *fps);
 fps_t *fps_init(void);
 
+// Spinging amogos
 int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem);
 sfRenderWindow *spinning_menu (int v);
 int compute_centre (float **mx, quad_list *elem);
+
+// MENU
+menu_t *main_menu_init(sfFont *font, sfTexture *button_texture);
+menu_t *pause_menu_init(sfFont *font, sfTexture *button_texture);
+menu_t *input_menu_init(sfFont *font, sfTexture *button_texture);
+void render_menu(sfRenderWindow *win, menu_t *menu);
+menu_t * get_curr_menu(global *g);
+
+// TYPING INPUT
+void activate_typing(global *g);
+void currently_typing(global *g, sfEvent *evt);
+
 
 #endif
