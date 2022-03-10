@@ -7,14 +7,6 @@
 
 #include "../inc/my_world.h"
 
-float **combine (float **m1, float **m2)
-{
-    float **m3 = multiply1(m1, m2, 3, 3);
-    free(m1);
-    free(m2);
-    return m3;
-}
-
 float **multiply1 (float **m1, float **m2, int ligne_m1, int col_m2)
 {
     float **result = malloc(sizeof(float *) * (ligne_m1 + 1));

@@ -48,20 +48,6 @@ float **x_rotation (float r)
     return m3;
 }
 
-float **view_matrix (void)
-{
-    float *l1 = malloc(sizeof(float)), *l2 = malloc(sizeof(float));
-    float *l3 = malloc(4), **m3 = malloc(8 * 4), **result;
-    l1[0] = 50;
-    l2[0] = 50;
-    l3[0] = 300;
-    m3[0] = l1;
-    m3[1] = l2;
-    m3[2] = l3;
-    m3[3] = NULL;
-    return m3;
-}
-
 float **position_matrix (float x, float z, float zoom)
 {
     float *l1 = malloc(sizeof(float) * 3), *l2 = malloc(sizeof(float) * 3);

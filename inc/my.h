@@ -61,6 +61,9 @@ int my_str_isalpha (char const *str);
 int char_is_num (char c);
 int my_str_isnum (char const *str);
 
+char *my_strndup(const char *src, size_t n);
+char *my_strncpy(char *dest, const char *src, size_t n);
+
 word *str_split (char *path, char *cutter);
 int true_cmp (char *str1, char *str2);
 int my_strncmp (char *str1, char *str2, int n);

@@ -9,10 +9,10 @@
 
 int main (int argc, char **argv)
 {
+    // printf("%f\n", my_atof(my_strdup("-0.11111111111111")));
+    // printf("%f\n", my_atof("-1.0"));
     return my_world(argc, argv, spinning_menu(1));
 }
-
-
 
 //expérimental donc pas encore propre
 //en gros c ce qui va permettre de faire tourner un modèle dans le menu
@@ -64,54 +64,31 @@ sfRenderWindow *spinning_menu (int v)
 }
 //
 
-//faut revoir du début cette merde
-void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *window)
+//j'ai mis ça a la norme
+//en gros si tu veux ajouter un outils dans ta tool bar t'as juste a ajouter son keycode dans le tableau "buttons" && modifier la valeur d'arrêt
+//du i dans le premier for donc si on a trois outils tu met i < 3
+void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *w)
 {
-    if (event.type == sfEvtMouseButtonReleased) {
-        if (sfFloatRect_contains(&g->tb->icons_rect[1], event.mouseButton.x, event.mouseButton.y)) {
-            move_toolbar_cursor(g->tb, 0);
-            g->tb->edit_mode = 0;
-        } else if (sfFloatRect_contains(&g->tb->icons_rect[2], event.mouseButton.x, event.mouseButton.y)) {
-            move_toolbar_cursor(g->tb, 1);
-            g->tb->edit_mode = 1;
-        } else if (sfFloatRect_contains(&g->tb->icons_rect[3], event.mouseButton.x, event.mouseButton.y)) {
-            move_toolbar_cursor(g->tb, 2);
-            g->tb->edit_mode = 2;
-        } else
-            (clic_management(&event, root, window, g) == 1) ? g->refresh = 1 : 0;
-    }
-    if (event.type == sfEvtKeyPressed) {
-        switch (event.key.code) {
-        case sfKeyP:
-            toggle_toolbar_visibility(g->tb);
-            break;
-        case sfKeyNumpad1:
-            move_toolbar_cursor(g->tb, 0);
-            g->tb->edit_mode = 0;
-            break;
-        case sfKeyNumpad2:
-            move_toolbar_cursor(g->tb, 1);
-            g->tb->edit_mode = 1;
-            break;
-        case sfKeyNumpad3:
-            move_toolbar_cursor(g->tb, 2);
-            g->tb->edit_mode = 2;
-            break;
-        case sfKeyNumpad4:
-            move_toolbar_cursor(g->tb, 3);
-            g->tb->edit_mode = 3;
-            break;
-        case sfKeyNumpad5:
-            move_toolbar_cursor(g->tb, 4);
-            g->tb->edit_mode = 4;
-            break;
-        case sfKeyNumpad6:
-            save_file(root, "save");
-            break;
-        default:
-            break;
+    int buttons[5] = {76, 77, 78, 79, 80}, b = 0;
+    int x = event.mouseButton.x, y = event.mouseButton.y;
+    int is_clicking = (event.type == sfEvtMouseButtonReleased) ? 1 : 0;
+    for (int i = 0;i < 3 && is_clicking == 1;i++) {
+        if (sfFloatRect_contains(&g->tb->icons_rect[i + 1], x, y)) {
+            move_toolbar_cursor(g->tb, i);
+            g->tb->edit_mode = i;
+            b++;
         }
     }
+    if (b == 0)
+        (clic_management(&event, root, w, g) == 1) ? g->refresh = 1 : 0;
+    if (event.type != sfEvtKeyPressed) return;
+    for (int i = 0;i < 5;i++) {
+        if (event.key.code == buttons[i]) {
+            move_toolbar_cursor(g->tb, i);
+            g->tb->edit_mode = i;
+        }
+    }
+    (event.key.code == 15) ? toggle_toolbar_visibility(g->tb) : 0;
 }
 //
 
@@ -242,108 +219,6 @@ global *setup_global (void)
     return g;
 }
 
-quad_list *create_mesh (int x, int y, sfVector3f pos, quad_list *root)
-{
-    quad_list *root_add = root, *ptr = NULL;
-    sfTexture *texture = sfTexture_createFromFile("assets/textures/textures.png", NULL);
-    float xx = 0, yy = 0;
-    for (int i = 0;i < y;i++) {
-        for (int j = 0;j < x;j++) {
-            xx = j * 50 - ((x * 50) / 2) + pos.x;
-            yy = i * 50 - ((y * 50) / 2) + pos.y;
-            ptr = tri_one(xx, yy, pos.z, texture);
-            ptr->next = tri_two(xx, yy, pos.z, texture);
-            ptr->next->next = root_add;
-            root_add = ptr;
-        }
-    }
-    return root_add;
-}
-
-float **point_matrix (float x, float y, float z)
-{
-    float **point = malloc(sizeof(float *) * 4);
-    point[0] = malloc(sizeof(float));
-    point[1] = malloc(sizeof(float));
-    point[2] = malloc(sizeof(float));
-    point[0][0] = x;
-    point[1][0] = y;
-    point[2][0] = z;
-    point[3] = NULL;
-    return point;
-}
-
-quad_list *tri_one (float x, float y, float z, sfTexture *texture)
-{
-    quad_list *elem = malloc(sizeof(quad_list));
-
-    elem->n_texture = 0;
-    elem->display = 1;
-    elem->next = NULL;
-
-    elem->p1 = point_matrix (x, y + 50, z);
-    elem->p2 = point_matrix (x, y, z);
-    elem->p3 = point_matrix (x + 50, y, z);
-
-    elem->array = sfVertexArray_create();
-    sfVertexArray_setPrimitiveType(elem->array, sfTriangles);
-
-    sfVertexArray_append(elem->array, (sfVertex) {(sfVector2f) {x, y + 50}, sfWhite, (sfVector2f) {0, 48}});
-    sfVertexArray_append(elem->array, (sfVertex) {(sfVector2f) {x, y}, sfWhite, (sfVector2f) {0, 0}});
-    sfVertexArray_append(elem->array, (sfVertex) {(sfVector2f) {x + 50, y}, sfWhite, (sfVector2f) {48, 0}});
-
-    elem->strip = sfVertexArray_create();
-    sfVertexArray_setPrimitiveType(elem->strip, sfLineStrip);
-
-    sfVertexArray_append(elem->strip, (sfVertex) {(sfVector2f) {x, y + 50}, sfWhite});
-    sfVertexArray_append(elem->strip, (sfVertex) {(sfVector2f) {x, y}, sfWhite});
-    sfVertexArray_append(elem->strip, (sfVertex) {(sfVector2f) {x + 50, y}, sfWhite});
-    sfVertexArray_append(elem->strip, (sfVertex) {(sfVector2f) {x, y}, sfWhite});
-
-    elem->render = malloc(sizeof(sfRenderStates));
-    elem->render->texture = texture;
-    elem->render->transform = sfTransform_Identity;
-    elem->render->blendMode = sfBlendNone;
-    elem->render->shader = NULL;
-    return elem;
-}
-
-quad_list *tri_two (float x, float y, float z, sfTexture *texture)
-{
-    quad_list *elem = malloc(sizeof(quad_list));
-
-    elem->n_texture = 0;
-    elem->display = 1;
-    elem->next = NULL;
-
-    elem->p1 = point_matrix (x + 50, y, z);
-    elem->p2 = point_matrix (x + 50, y + 50, z);
-    elem->p3 = point_matrix (x, y + 50, z);
-
-    elem->array = sfVertexArray_create();
-    sfVertexArray_setPrimitiveType(elem->array, sfTriangles);
-
-    sfVertexArray_append(elem->array, (sfVertex) {(sfVector2f) {x + 50, y}, sfWhite, (sfVector2f) {48, 0}});
-    sfVertexArray_append(elem->array, (sfVertex) {(sfVector2f) {x + 50, y + 50}, sfWhite, (sfVector2f) {48, 48}});
-    sfVertexArray_append(elem->array, (sfVertex) {(sfVector2f) {x, y + 50}, sfWhite, (sfVector2f) {0, 48}});
-
-    elem->strip = sfVertexArray_create();
-    sfVertexArray_setPrimitiveType(elem->strip, sfLineStrip);
-
-    sfVertexArray_append(elem->strip, (sfVertex) {(sfVector2f) {x + 50, y}, sfWhite});
-    sfVertexArray_append(elem->strip, (sfVertex) {(sfVector2f) {x + 50, y + 50}, sfWhite});
-    sfVertexArray_append(elem->strip, (sfVertex) {(sfVector2f) {x, y + 50}, sfWhite});
-    sfVertexArray_append(elem->strip, (sfVertex) {(sfVector2f) {x + 50, y}, sfWhite});
-
-    elem->render = malloc(sizeof(sfRenderStates));
-    elem->render->texture = texture;
-    elem->render->transform = sfTransform_Identity;
-    elem->render->blendMode = sfBlendNone;
-    elem->render->shader = NULL;
-    return elem;
-}
-
-
 //pour vérifier si un triangle est hors screen ou pas
 int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem)
 {
@@ -362,96 +237,4 @@ int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem)
         return (0);
     }
     return (1);
-}
-
-void calcul_projection (quad_list *elem, float **m1, float **mx)
-{
-    float **vertex2d1 = multiply1(m1, elem->p1, 2, 1);
-    float **vertex2d2 = multiply1(m1, elem->p2, 2, 1);
-    float **vertex2d3 = multiply1(m1, elem->p3, 2, 1);
-    sfVertexArray_getVertex(elem->array, 0)->position.x = vertex2d1[0][0] + 400;
-    sfVertexArray_getVertex(elem->array, 0)->position.y = vertex2d1[1][0] + 300;
-    sfVertexArray_getVertex(elem->array, 1)->position.x = vertex2d2[0][0] + 400;
-    sfVertexArray_getVertex(elem->array, 1)->position.y = vertex2d2[1][0] + 300;
-    sfVertexArray_getVertex(elem->array, 2)->position.x = vertex2d3[0][0] + 400;
-    sfVertexArray_getVertex(elem->array, 2)->position.y = vertex2d3[1][0] + 300;
-    sfVertexArray_getVertex(elem->strip, 0)->position.x = vertex2d1[0][0] + 400;
-    sfVertexArray_getVertex(elem->strip, 0)->position.y = vertex2d1[1][0] + 300;
-    sfVertexArray_getVertex(elem->strip, 1)->position.x = vertex2d2[0][0] + 400;
-    sfVertexArray_getVertex(elem->strip, 1)->position.y = vertex2d2[1][0] + 300;
-    sfVertexArray_getVertex(elem->strip, 2)->position.x = vertex2d3[0][0] + 400;
-    sfVertexArray_getVertex(elem->strip, 2)->position.y = vertex2d3[1][0] + 300;
-    sfVertexArray_getVertex(elem->strip, 3)->position.x = vertex2d1[0][0] + 400;
-    sfVertexArray_getVertex(elem->strip, 3)->position.y = vertex2d1[1][0] + 300;
-    if (is_in_screen(vertex2d1, vertex2d2, vertex2d3, elem) == 0) return;
-    compute_centre(mx, elem);
-}
-
-int compute_centre (float **mx, quad_list *elem)
-{
-    elem->display = 1;
-    float **vertex3d1 = multiply1(mx, elem->p1, 3, 1);
-    float **vertex3d2 = multiply1(mx, elem->p2, 3, 1);
-    float **vertex3d3 = multiply1(mx, elem->p3, 3, 1);
-    sfVector3f h_c;
-    h_c.x = (vertex3d1[0][0] + vertex3d3[0][0]) / 2;
-    h_c.y = (vertex3d1[1][0] + vertex3d3[1][0]) / 2;
-    h_c.z = (vertex3d1[2][0] + vertex3d3[2][0]) / 2;
-    elem->center.x = (h_c.x + vertex3d2[0][0]) / 2;
-    elem->center.y = (h_c.y + vertex3d2[1][0]) / 2;
-    elem->center.z = (h_c.z + vertex3d2[2][0]) / 2;
-    free_matrix(vertex3d1, 3);
-    free_matrix(vertex3d2, 3);
-    free_matrix(vertex3d3, 3);
-}
-
-void update_mesh (quad_list *root, float zoom, float x, float z)
-{
-    float **mx = position_matrix(x, z, zoom);
-    float **temp = projection_matrix();
-    float **proj = multiply1(temp, mx, 3, 3);
-    for (quad_list *ptr = root;ptr != NULL; ptr = ptr->next) {
-        calcul_projection(ptr, proj, mx);
-        ptr->nbr = pow(ptr->center.x, 2);
-        ptr->nbr += pow(ptr->center.y, 2);
-        ptr->nbr += pow(ptr->center.z - (1000 * 1 / zoom), 2);
-        ptr->nbr = sqrt(ptr->nbr);
-    }
-    free_matrix(mx, 3);
-    free_matrix(proj, 3);
-    free_matrix(temp, 3);
-}
-
-void free_matrix (float **m, int y)
-{
-    for (int i = 0;i < y;i++) {
-        free(m[i]);
-    }
-    free(m);
-}
-
-int approximation (int i, int j, int delta)
-{
-    if (i > j - delta && i < j + delta) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
-int free_quad_list (quad_list *root)
-{
-    quad_list *test = root;
-    while (root != NULL) {
-        test = root;
-        root = root->next;
-        sfVertexArray_destroy(test->array);
-        sfVertexArray_destroy(test->strip);
-        free_matrix(test->p1, 3);
-        free_matrix(test->p2, 3);
-        free_matrix(test->p3, 3);
-        free(test->render);
-        free(test);
-    }
-    return (0);
 }

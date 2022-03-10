@@ -38,7 +38,7 @@ int save_file (quad_list *root, char *name)
     FILE *stream = fopen(name, "w");
     for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next, free(temp)) {
         save_points(ptr, stream);
-        for (int i = 0;i < 3;i++) {
+        for (int i = 0;i < 3;fwrite(" ", 1, 1, stream), i++) {
             temp = float_to_str(sfVertexArray_getVertex(ptr->array, i)->texCoords.x);
             fwrite(temp, my_strlen(temp), 1, stream);
             free(temp);
@@ -46,7 +46,6 @@ int save_file (quad_list *root, char *name)
             temp = float_to_str(sfVertexArray_getVertex(ptr->array, i)->texCoords.y);
             fwrite(temp, my_strlen(temp), 1, stream);
             free(temp);
-            fwrite(" ", 1, 1, stream);
         }
         temp = int_to_char(ptr->n_texture);
         fwrite(temp, my_strlen(temp), 1, stream);
@@ -83,9 +82,9 @@ quad_list *loat_file (quad_list *root, char *file)
 {
     char **object = file_str(file);
     quad_list *ptr = NULL;
-    sfTexture *yes = sfTexture_createFromFile("assets/textures/textures.png", NULL);
+    sfTexture *tx = sfTexture_createFromFile("assets/textures/textures.png", 0);
     char **t = NULL;
-    for (int i = 0;object[i] != NULL;i++) {
+    for (int i = 0;object[i] != NULL;ptr->next = root, root = ptr, i++) {
         t = my_2d_array_str_split(&object[i][2], ' ');
         ptr = tri_one(0, 0, 0 ,NULL);
         sfVertexArray_getVertex(ptr->array, 0)->texCoords.x = my_getnbr2(t[9]);
@@ -94,13 +93,11 @@ quad_list *loat_file (quad_list *root, char *file)
         sfVertexArray_getVertex(ptr->array, 1)->texCoords.y = my_getnbr2(t[12]);
         sfVertexArray_getVertex(ptr->array, 2)->texCoords.x = my_getnbr2(t[13]);
         sfVertexArray_getVertex(ptr->array, 2)->texCoords.y = my_getnbr2(t[14]);
-        for (int i = 0;i < 3;ptr->p1[i][0] = atof(t[i]), i++);
-        for (int i = 0;i < 3;ptr->p2[i][0] = atof(t[i + 3]), i++);
-        for (int i = 0;i < 3;ptr->p3[i][0] = atof(t[i + 6]), i++);
+        for (int i = 0;i < 3;ptr->p1[i][0] = my_atof(t[i]), i++);
+        for (int i = 0;i < 3;ptr->p2[i][0] = my_atof(t[i + 3]), i++);
+        for (int i = 0;i < 3;ptr->p3[i][0] = my_atof(t[i + 6]), i++);
         ptr->n_texture = my_getnbr2(t[15]);
-        ptr->render->texture = yes;
-        ptr->next = root;
-        root = ptr;
+        ptr->render->texture = tx;
     }
     return root;
 }
