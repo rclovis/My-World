@@ -34,16 +34,18 @@ sfRenderWindow *spinning_menu (int v)
     sfClock *clock = sfClock_create();
     sfEvent event;
     global *g = setup_global();
+    g->curr_menu->data = M_MAIN;
     sfRenderWindow_setFramerateLimit(window, 30);
     while (sfRenderWindow_isOpen(window)) {
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
         (x >= 6.28 || x <= -6.28) ? x = 0 : 0;
-        while (sfRenderWindow_pollEvent(window, &event))
+        while (sfRenderWindow_pollEvent(window, &event)) {
+            menu_evt(g, &event);
             (event.type == sfEvtClosed) ? sfRenderWindow_close(window) : 0;
+        }
         if (time > 0.01) {
             z += (v == 1) ? 0.05 : 0.01;
             sfRenderWindow_clear(window, sfBlue);
-
             update_mesh(root, zoom, x, z);
             root = push_swap(root);
 
@@ -53,10 +55,10 @@ sfRenderWindow *spinning_menu (int v)
                     sfRenderWindow_drawVertexArray(window, ptr->strip, NULL);
                 }
             }
+            render_menu(window, g);
             sfRenderWindow_display(window);
             sfClock_restart(clock);
         }
-
     }
     free_quad_list(root);
     free(g);
@@ -215,6 +217,20 @@ global *setup_global (void)
 
     // FPS: clock text font counter
     g->fps = fps_init();
+
+    // MENU
+    g->input_buffer;
+    for (int i = 0; i < INPUT_BUFFER_SIZE; i++)
+        g->input_buffer[i] = 0;
+    g->is_typing = 0;
+    g->will_type = 0;
+    g->curr_menu = callstack_init();
+    g->cursor = 0;
+    g->pixel_font = sfFont_createFromFile("assets/fonts/pixel.ttf");
+    g->button_texture = sfTexture_createFromFile("assets/gui/button.png", NULL);
+    g->main_menu = main_menu_init(g->pixel_font, g->button_texture);
+    g->input_menu = input_menu_init(g->pixel_font, g->button_texture);
+    g->pause_menu = pause_menu_init(g->pixel_font, g->button_texture);
 
     return g;
 }

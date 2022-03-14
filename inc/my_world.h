@@ -16,9 +16,23 @@
 	#include <SFML/Graphics.h>
 	#include "my.h"
 
+// MENU VALUES
+	#define	M_NONE	NULL
+	#define	M_MAIN	1
+	#define	M_PAUSE	2
+	#define	M_INPUT	3
+
+// NON-WRITABLE CHARACTERS
 	#define	ENTER 				14
 	#define	BACKSPACE			8
-	#define INPUT_BUFFER_SIZE	25
+	#define INPUT_BUFFER_SIZE	20
+
+// MENU CALLSTACK STRUCTURE
+typedef struct callstack {
+	int data;
+	struct callstack *next;
+	struct callstack *prev;
+} callstack_t;
 
 /*
 	sprite = button's sprite
@@ -26,6 +40,7 @@
 	text = button's label
 */
 typedef struct button {
+	sfFloatRect collision_box;
 	sfTexture *texture;
 	sfSprite *sprite;
 	sfIntRect rect;
@@ -93,11 +108,13 @@ struct global {
 	fps_t *fps;
 
 	// menu
-	int curr_menu;
+	callstack_t *curr_menu;
 	int will_type;
 	int is_typing;
 	int cursor;
 	char input_buffer[INPUT_BUFFER_SIZE];
+	sfFont *pixel_font;
+	sfTexture *button_texture;
 	menu_t *main_menu;
 	menu_t *pause_menu;
 	menu_t *input_menu;
@@ -204,11 +221,19 @@ sfRenderWindow *spinning_menu (int v);
 int compute_centre (float **mx, quad_list *elem);
 
 // MENU
+menu_t * get_curr_menu(global *g);
+menu_t *input_menu_init(sfFont *font, sfTexture *button_texture);
 menu_t *main_menu_init(sfFont *font, sfTexture *button_texture);
 menu_t *pause_menu_init(sfFont *font, sfTexture *button_texture);
-menu_t *input_menu_init(sfFont *font, sfTexture *button_texture);
-void render_menu(sfRenderWindow *win, menu_t *menu);
-menu_t * get_curr_menu(global *g);
+void main_menu_button_on_click(global *g, sfEvent *evt);
+void pause_menu_button_on_click(global *g, sfEvent *evt);
+void input_menu_button_on_click(global *g, sfEvent *evt);
+void render_menu(sfRenderWindow *win, global *g);
+callstack_t *callstack_init(void);
+callstack_t *callstack_add(callstack_t *curr_head, int value);
+callstack_t *callstack_del(callstack_t *curr_head);
+void menu_button_hover(global *g, sfEvent *evt);
+void menu_evt(global *g, sfEvent *evt);
 
 // TYPING INPUT
 void activate_typing(global *g);
