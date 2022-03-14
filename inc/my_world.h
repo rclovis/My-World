@@ -17,13 +17,12 @@
 	#include "my.h"
 
 // MENU VALUES
-	#define	M_NONE	NULL
 	#define	M_MAIN	1
 	#define	M_PAUSE	2
 	#define	M_INPUT	3
 
 // NON-WRITABLE CHARACTERS
-	#define	ENTER 				14
+	#define	ENTER 				13
 	#define	BACKSPACE			8
 	#define INPUT_BUFFER_SIZE	20
 
@@ -109,10 +108,9 @@ struct global {
 
 	// menu
 	callstack_t *curr_menu;
-	int will_type;
 	int is_typing;
 	int cursor;
-	char input_buffer[INPUT_BUFFER_SIZE];
+	int input_buffer[INPUT_BUFFER_SIZE];
 	sfFont *pixel_font;
 	sfTexture *button_texture;
 	menu_t *main_menu;

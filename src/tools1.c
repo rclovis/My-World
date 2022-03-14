@@ -41,7 +41,7 @@ int free_quad_list (quad_list *root)
     return (0);
 }
 
-float my_atof (char *str)
+float M_ (char *str)
 {
     int i = 0;
     double p1 = 0, p2 = 0, pow = 1, sign = 1;

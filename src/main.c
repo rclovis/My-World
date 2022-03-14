@@ -9,8 +9,8 @@
 
 int main (int argc, char **argv)
 {
-    // printf("%f\n", my_atof(my_strdup("-0.11111111111111")));
-    // printf("%f\n", my_atof("-1.0"));
+    // printf("%f\n", atof(my_strdup("-0.11111111111111")));
+    // printf("%f\n", atof("-1.0"));
     return my_world(argc, argv, spinning_menu(1));
 }
 
@@ -34,8 +34,9 @@ sfRenderWindow *spinning_menu (int v)
     sfClock *clock = sfClock_create();
     sfEvent event;
     global *g = setup_global();
-    g->curr_menu->data = M_MAIN;
-    sfRenderWindow_setFramerateLimit(window, 30);
+    g->curr_menu->data = M_INPUT;
+    g->is_typing = 1;
+    sfRenderWindow_setFramerateLimit(window, 60);
     while (sfRenderWindow_isOpen(window)) {
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
         (x >= 6.28 || x <= -6.28) ? x = 0 : 0;
@@ -43,7 +44,7 @@ sfRenderWindow *spinning_menu (int v)
             menu_evt(g, &event);
             (event.type == sfEvtClosed) ? sfRenderWindow_close(window) : 0;
         }
-        if (time > 0.01) {
+        if (time > 0.00001) {
             z += (v == 1) ? 0.05 : 0.01;
             sfRenderWindow_clear(window, sfBlue);
             update_mesh(root, zoom, x, z);
@@ -101,7 +102,7 @@ int my_world (int argc, char **argv, sfRenderWindow *w)
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
     sfTexture *yes = sfTexture_createFromFile("assets/textures/textures.png", NULL);
-    quad_list *root = create_mesh(10, 10, (sfVector3f) {0, 0, 0}, NULL);
+    quad_list *root = create_mesh(100, 100, (sfVector3f) {0, 0, 0}, NULL);
     // root = create_mesh(4, 5, (sfVector3f) {50, 50, 50}, root);
     // quad_list *root = add_object(root, "assets/3d_objects/untitledi.obj", (sfVector2f) {0, 0});
     // root = add_object(root, "assets/3d_objects/detail_treeLarge.obj", (sfVector3f) {5, 5, 1});
@@ -116,7 +117,7 @@ int my_world (int argc, char **argv, sfRenderWindow *w)
     float time = 0, zoom = 1, x = 1,  z = 0.3;
 
     // GAME LOOP
-    sfRenderWindow_setFramerateLimit(window, 30);
+    sfRenderWindow_setFramerateLimit(window, 60);
     while (sfRenderWindow_isOpen(window)) {
         display_fps(g->fps);
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
@@ -139,7 +140,7 @@ int my_world (int argc, char **argv, sfRenderWindow *w)
         }
 
         // TIME LOOP
-        if (time > 0.01) {
+        if (time > 0.00000000001) {
             g->fps->frames++;
             sfRenderWindow_clear(window, sfBlue);
             g->state = 0;
@@ -219,11 +220,7 @@ global *setup_global (void)
     g->fps = fps_init();
 
     // MENU
-    g->input_buffer;
-    for (int i = 0; i < INPUT_BUFFER_SIZE; i++)
-        g->input_buffer[i] = 0;
     g->is_typing = 0;
-    g->will_type = 0;
     g->curr_menu = callstack_init();
     g->cursor = 0;
     g->pixel_font = sfFont_createFromFile("assets/fonts/pixel.ttf");
@@ -231,6 +228,8 @@ global *setup_global (void)
     g->main_menu = main_menu_init(g->pixel_font, g->button_texture);
     g->input_menu = input_menu_init(g->pixel_font, g->button_texture);
     g->pause_menu = pause_menu_init(g->pixel_font, g->button_texture);
+    for (int i = 0; i < INPUT_BUFFER_SIZE; i++)
+        g->input_buffer[i] = 0;
 
     return g;
 }

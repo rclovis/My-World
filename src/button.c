@@ -10,7 +10,7 @@
 menu_t * get_curr_menu(global *g)
 {
     if (g->curr_menu == NULL)
-        return M_NONE;
+        return NULL;
     switch (g->curr_menu->data) {
     case M_MAIN:
         return g->main_menu;
@@ -19,7 +19,7 @@ menu_t * get_curr_menu(global *g)
     case M_INPUT:
         return g->input_menu;
     default:
-        return M_NONE;
+        return NULL;
     }
 }
 

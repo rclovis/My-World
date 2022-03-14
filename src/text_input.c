@@ -7,30 +7,17 @@
 
 #include "my_world.h"
 
-void activate_typing(global *g)
-{
-    if (g->will_type && !g->is_typing) {
-        g->is_typing = 1;
-        g->will_type = 0;
-    }
-}
-
 void currently_typing(global *g, sfEvent *evt)
 {
     if (evt->text.unicode == BACKSPACE) {
         (g->cursor > 0) ? (g->cursor--) : (0);
         g->input_buffer[g->cursor] = 0;
-    }
-    else if (evt->text.unicode == ENTER) {
-        for (int l = 0; g->input_buffer[l] != 0; l++)
-            printf("%c", g->input_buffer[l]);
-        printf("\n");
+    } else if (evt->text.unicode == ENTER) {
         g->is_typing = 0;
-        for (int j = 0; j < INPUT_BUFFER_SIZE; j++)
-            g->input_buffer[j] = 0;
+        for (int i = 0; i < INPUT_BUFFER_SIZE; i++)
+            g->input_buffer[i] = 0;
         g->cursor = 0;
-    }
-    else if (g->cursor < INPUT_BUFFER_SIZE - 1) {
+    } else if (g->cursor < INPUT_BUFFER_SIZE - 1) {
         g->input_buffer[g->cursor] = evt->text.unicode;
         g->cursor++;
     }

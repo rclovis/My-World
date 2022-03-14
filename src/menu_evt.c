@@ -9,6 +9,8 @@
 
 void menu_evt(global *g, sfEvent *evt)
 {
+    if (evt->type == sfEvtTextEntered && g->is_typing == 1)
+        currently_typing(g, evt);
     menu_button_hover(g, evt);
     main_menu_button_on_click(g, evt);
     pause_menu_button_on_click(g, evt);
@@ -47,11 +49,11 @@ void input_menu_button_on_click(global *g, sfEvent *evt)
     int y = evt->mouseButton.y;
     if (evt->type == 10 && g->curr_menu->data == M_INPUT) {
         if (sfFloatRect_contains(&menu->buttons[1]->collision_box, x, y)) {
-            printf("Hello ENTER %d\n", g->curr_menu->data);
+            g->is_typing = 0;
             g->curr_menu = callstack_del(g->curr_menu);
         }
         if (sfFloatRect_contains(&menu->buttons[2]->collision_box, x, y)) {
-            printf("Hello CANCEL %d\n", g->curr_menu->data);
+            g->is_typing = 0;
             g->curr_menu = callstack_del(g->curr_menu);
         }
     }
@@ -66,19 +68,17 @@ void pause_menu_button_on_click(global *g, sfEvent *evt)
     int y = evt->mouseButton.y;
     if (evt->type == 10 && g->curr_menu->data == M_PAUSE) {
         if (sfFloatRect_contains(&menu->buttons[0]->collision_box, x, y)) {
-            printf("Hello RESUME %d\n", g->curr_menu->data);
             g->curr_menu = callstack_del(g->curr_menu);
         }
         if (sfFloatRect_contains(&menu->buttons[1]->collision_box, x, y)) {
-            printf("Hello LOAD %d\n", g->curr_menu->data);
+            g->is_typing = 1;
             g->curr_menu = callstack_add(g->curr_menu, M_INPUT);
         }
         if (sfFloatRect_contains(&menu->buttons[2]->collision_box, x, y)) {
-            printf("Hello SAVE %d\n", g->curr_menu->data);
+            g->is_typing = 1;
             g->curr_menu = callstack_add(g->curr_menu, M_INPUT);
         }
         if (sfFloatRect_contains(&menu->buttons[3]->collision_box, x, y)) {
-            printf("Hello QUIT %d\n", g->curr_menu->data);
             g->curr_menu = callstack_del(g->curr_menu);
         }
     }
@@ -93,15 +93,14 @@ void main_menu_button_on_click(global *g, sfEvent *evt)
     int y = evt->mouseButton.y;
     if (evt->type == 10 && g->curr_menu->data == M_MAIN) {
         if (sfFloatRect_contains(&menu->buttons[0]->collision_box, x, y)) {
-            printf("Hello CREATE %d\n", g->curr_menu->data);
+            g->is_typing = 1;
             g->curr_menu = callstack_add(g->curr_menu, M_INPUT);
         }
         if (sfFloatRect_contains(&menu->buttons[1]->collision_box, x, y)) {
-            printf("Hello LOAD %d\n", g->curr_menu->data);
+            g->is_typing = 1;
             g->curr_menu = callstack_add(g->curr_menu, M_INPUT);
         }
         if (sfFloatRect_contains(&menu->buttons[2]->collision_box, x, y)) {
-            printf("Hello QUIT %d\n", g->curr_menu->data);
             g->curr_menu = callstack_del(g->curr_menu);
         }
     }

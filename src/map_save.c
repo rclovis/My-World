@@ -93,9 +93,9 @@ quad_list *loat_file (quad_list *root, char *file)
         sfVertexArray_getVertex(ptr->array, 1)->texCoords.y = my_getnbr2(t[12]);
         sfVertexArray_getVertex(ptr->array, 2)->texCoords.x = my_getnbr2(t[13]);
         sfVertexArray_getVertex(ptr->array, 2)->texCoords.y = my_getnbr2(t[14]);
-        for (int i = 0;i < 3;ptr->p1[i][0] = my_atof(t[i]), i++);
-        for (int i = 0;i < 3;ptr->p2[i][0] = my_atof(t[i + 3]), i++);
-        for (int i = 0;i < 3;ptr->p3[i][0] = my_atof(t[i + 6]), i++);
+        for (int i = 0;i < 3;ptr->p1[i][0] = atof(t[i]), i++);
+        for (int i = 0;i < 3;ptr->p2[i][0] = atof(t[i + 3]), i++);
+        for (int i = 0;i < 3;ptr->p3[i][0] = atof(t[i + 6]), i++);
         ptr->n_texture = my_getnbr2(t[15]);
         ptr->render->texture = tx;
     }
