@@ -9,23 +9,24 @@
 
 int main (int argc, char **argv)
 {
-    // printf("%f\n", atof(my_strdup("-0.11111111111111")));
-    // printf("%f\n", atof("-1.0"));
-    return my_world(argc, argv, spinning_menu(1));
+    char *name;
+    quad_list *root;
+    sfRenderWindow *w = spinning_menu(1, &name, &root);
+    return my_world(w, name, root);
 }
 
 //expérimental donc pas encore propre
 //en gros c ce qui va permettre de faire tourner un modèle dans le menu
 //avec 1 en argument, ça fait tourner amogus et avec 0 ça fait tourner une map
 //du coup il faudra penser à créer une map sympa à faire tourner dans le menu
-sfRenderWindow *spinning_menu (int v)
+sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
 {
     sfVideoMode mode = {800, 600, 32};
     sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
     quad_list *root = NULL;
     float time = 0, zoom = 1, x = 1,  z = 0;
     if (v == 1) {
-        root = add_object(root, "assets/3d_objects/untitledi.obj", (sfVector3f) {-7, -7, -23});
+        root = add_object(root, "assets/3d_objects/amogus", (sfVector3f) {-7, -7, -23});
         x = 1.57;
     } else {
         root = loat_file(root, "save");
@@ -34,16 +35,40 @@ sfRenderWindow *spinning_menu (int v)
     sfClock *clock = sfClock_create();
     sfEvent event;
     global *g = setup_global();
-    g->curr_menu->data = M_INPUT;
-    g->is_typing = 1;
+    g->curr_menu->data = M_MAIN;
+    g->is_typing = 0;
     sfRenderWindow_setFramerateLimit(window, 60);
     while (sfRenderWindow_isOpen(window)) {
-        time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
-        (x >= 6.28 || x <= -6.28) ? x = 0 : 0;
         while (sfRenderWindow_pollEvent(window, &event)) {
-            menu_evt(g, &event);
+            menu_evt(g, &event, window);
             (event.type == sfEvtClosed) ? sfRenderWindow_close(window) : 0;
         }
+
+
+        if (g->curr_menu == NULL || g->complete2 == 1 || g->complete == 1 && g->id_menu == 1) {
+            char *name = malloc(sizeof(char) * 21);
+            name[20] = '\0';
+            for (int i = 0; i < 20; i++)
+                name[i] = g->input_buffer[i];
+            *file = my_strcat("assets/3d_objects/", name);
+            if (v == 1) {
+                *to_send = add_object(NULL, "assets/3d_objects/amogus", (sfVector3f) {-7, -7, -23});
+                return (window);
+            }
+            if (g->complete2 == 1) {
+                *to_send = create_mesh(g->x, g->y, (sfVector3f) {0, 0, 0}, NULL);
+            }
+            if (g->complete == 1 && g->id_menu == 1) {
+                *to_send = loat_file(*to_send, name);
+            }
+            return (window);
+        }
+
+
+        time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
+        g->is_typing = (g->curr_menu->data == M_INPUT) ? 1 : 0;
+        if (g->complete == 1 && g->id_menu == 0 && g->curr_menu->data == 3)
+            g->curr_menu = callstack_add(g->curr_menu, M_COORDS);
         if (time > 0.00001) {
             z += (v == 1) ? 0.05 : 0.01;
             sfRenderWindow_clear(window, sfBlue);
@@ -97,17 +122,9 @@ void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *w)
 
 
 //on peut encore bcp séquencer mais comme je pense qu'on va ajouter && modifier des choses...
-int my_world (int argc, char **argv, sfRenderWindow *w)
+int my_world (sfRenderWindow *window, char *file, quad_list *root)
 {
-    sfVideoMode mode = {800, 600, 32};
-    sfRenderWindow *window = sfRenderWindow_create(mode, "my_world", sfResize | sfClose, NULL);
-    sfTexture *yes = sfTexture_createFromFile("assets/textures/textures.png", NULL);
-    quad_list *root = create_mesh(100, 100, (sfVector3f) {0, 0, 0}, NULL);
-    // root = create_mesh(4, 5, (sfVector3f) {50, 50, 50}, root);
-    // quad_list *root = add_object(root, "assets/3d_objects/untitledi.obj", (sfVector2f) {0, 0});
-    // root = add_object(root, "assets/3d_objects/detail_treeLarge.obj", (sfVector3f) {5, 5, 1});
 
-    // quad_list *root = loat_file(root, "save");
 
     sfClock *clock = sfClock_create();
     sfEvent event;
@@ -196,6 +213,10 @@ global *setup_global (void)
     g->apply_mode = 0;
     g->refresh = 1;
     g->state = 0;
+    g->id_menu = 0;
+    g->complete = 0;
+    g->x = 1;
+    g->y = 1;
     g->vertex = sfCircleShape_create();
     sfCircleShape_setRadius(g->vertex, 5);
     sfCircleShape_setFillColor(g->vertex, sfBlack);
@@ -204,7 +225,7 @@ global *setup_global (void)
     g->bevel = sfVertexArray_create();
     sfVertexArray_setPrimitiveType(g->bevel, sfLines);
     sfVertexArray_append(g->bevel, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
-    sfVertexArray_append(g->bevel, (sfVertex) {(sfVector2f) {-100, -101}, sfBlack});
+    sfVertexArray_append(g->bevel, (sfVertex) {(sfVector2f) {-100, -100}, sfBlack});
 
     g->tile = sfVertexArray_create();
     sfVertexArray_setPrimitiveType(g->tile, sfLinesStrip);
@@ -228,6 +249,7 @@ global *setup_global (void)
     g->main_menu = main_menu_init(g->pixel_font, g->button_texture);
     g->input_menu = input_menu_init(g->pixel_font, g->button_texture);
     g->pause_menu = pause_menu_init(g->pixel_font, g->button_texture);
+    g->coords_menu = coords_menu_init(g->pixel_font, g->button_texture);
     for (int i = 0; i < INPUT_BUFFER_SIZE; i++)
         g->input_buffer[i] = 0;
 

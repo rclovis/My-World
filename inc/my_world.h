@@ -20,6 +20,7 @@
 	#define	M_MAIN	1
 	#define	M_PAUSE	2
 	#define	M_INPUT	3
+	#define	M_COORDS	4
 
 // NON-WRITABLE CHARACTERS
 	#define	ENTER 				13
@@ -111,11 +112,18 @@ struct global {
 	int is_typing;
 	int cursor;
 	int input_buffer[INPUT_BUFFER_SIZE];
+	int load;
+	int id_menu;
+	int complete;
+	int complete2;
+	int x;
+	int y;
 	sfFont *pixel_font;
 	sfTexture *button_texture;
 	menu_t *main_menu;
 	menu_t *pause_menu;
 	menu_t *input_menu;
+	menu_t *coords_menu;
 };
 
 typedef struct linked_vertex linked_vertex;
@@ -126,12 +134,12 @@ struct linked_vertex {
 	linked_vertex *next;
 };
 
-int my_world (int argc, char **argv, sfRenderWindow *window);
+int my_world (sfRenderWindow *window, char *file, quad_list *root);
 void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *window);
 global *setup_global (void);
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g);
 int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem);
-sfRenderWindow *spinning_menu (int v);
+sfRenderWindow *spinning_menu (int v, char **file, quad_list **root);
 
 //create mesh
 quad_list *create_mesh (int x, int y, sfVector3f pos, quad_list *root);
@@ -213,10 +221,6 @@ void move_toolbar_cursor(toolbar_t *tb, int new_mode);
 void display_fps(fps_t *fps);
 fps_t *fps_init(void);
 
-// Spinging amogos
-int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem);
-sfRenderWindow *spinning_menu (int v);
-int compute_centre (float **mx, quad_list *elem);
 
 // MENU
 menu_t * get_curr_menu(global *g);
@@ -231,7 +235,9 @@ callstack_t *callstack_init(void);
 callstack_t *callstack_add(callstack_t *curr_head, int value);
 callstack_t *callstack_del(callstack_t *curr_head);
 void menu_button_hover(global *g, sfEvent *evt);
-void menu_evt(global *g, sfEvent *evt);
+void menu_evt(global *g, sfEvent *evt, sfRenderWindow *window);
+menu_t *coords_menu_init(sfFont *font, sfTexture *button_texture);
+void coords_menu_button_on_click(global *g, sfEvent *evt, sfRenderWindow* w);
 
 // TYPING INPUT
 void activate_typing(global *g);
