@@ -84,6 +84,7 @@ typedef struct toolbar {
 	sfSprite *sprite;
 	sfSprite **icons;
 	sfFloatRect *icons_rect;
+	button_t *brush;
 	int edit_mode;
 	int nb_icons;
 	int view_toggle;
@@ -246,6 +247,7 @@ void menu_evt(global *g, sfEvent *evt, sfRenderWindow *window);
 menu_t *coords_menu_init(sfFont *font, sfTexture *button_texture);
 void coords_menu_button_on_click(global *g, sfEvent *evt, sfRenderWindow* w);
 int play_music (sfMusic *music);
+button_t *button_init(const char *text, sfFont *font, sfTexture *texture);
 
 // TYPING INPUT
 void activate_typing(global *g);

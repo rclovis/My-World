@@ -16,6 +16,8 @@ void render_toolbar(sfRenderWindow *win, toolbar_t *tb)
     sfRenderWindow_drawSprite(win, tb->icons[1], NULL);
     sfRenderWindow_drawSprite(win, tb->icons[2], NULL);
     sfRenderWindow_drawSprite(win, tb->icons[3], NULL);
+    sfRenderWindow_drawSprite(win, tb->icons[4], NULL);
+    sfRenderWindow_drawSprite(win, tb->icons[5], NULL);
 
     // render selection icon always after toolbar icons
     sfRenderWindow_drawSprite(win, tb->icons[0], NULL);
@@ -60,7 +62,7 @@ toolbar_t *setup_toolbar(void)
     tb->view_toggle = 1;
 
     // number of icons. Defined by YOU
-    tb->nb_icons = 4;
+    tb->nb_icons = 6;
 
     // generate all icons
     tb->icons = malloc(sizeof(sfSprite *) * (tb->nb_icons + 1));
@@ -77,12 +79,18 @@ toolbar_t *setup_toolbar(void)
         sfTexture_createFromFile("assets/gui/edge_select.png", NULL), sfTrue);
     sfSprite_setTexture(tb->icons[3],
         sfTexture_createFromFile("assets/gui/face_select.png", NULL), sfTrue);
+    sfSprite_setTexture(tb->icons[4],
+        sfTexture_createFromFile("assets/gui/brush_icon.png", NULL), sfTrue);
+    sfSprite_setTexture(tb->icons[5],
+        sfTexture_createFromFile("assets/gui/ch_texture.png", NULL), sfTrue);
 
         // set positions
     sfSprite_setPosition(tb->icons[0], (sfVector2f) {757, 98});
-    sfSprite_setPosition(tb->icons[1], (sfVector2f) {764, 106});
-    sfSprite_setPosition(tb->icons[2], (sfVector2f) {764, 106+40});
-    sfSprite_setPosition(tb->icons[3], (sfVector2f) {764, 106+40+40});
+    sfSprite_setPosition(tb->icons[1], (sfVector2f) {764, 106 + (40 * 0)});
+    sfSprite_setPosition(tb->icons[2], (sfVector2f) {764, 106 + (40 * 1)});
+    sfSprite_setPosition(tb->icons[3], (sfVector2f) {764, 106 + (40 * 2)});
+    sfSprite_setPosition(tb->icons[4], (sfVector2f) {764, 106 + (40 * 3)});
+    sfSprite_setPosition(tb->icons[5], (sfVector2f) {764, 106 + (40 * 4)});
 
     tb->icons_rect = malloc(sizeof(sfFloatRect) * (tb->nb_icons + 1));
     for (int i = 0; i < tb->nb_icons; i++)

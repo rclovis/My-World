@@ -24,7 +24,7 @@ NAME	=	my_world
 
 GREEN		=	\033[1;32m
 
-RED			=	\033[1;31m
+RED			=	\033[1;35m
 
 CYAN		=	\033[1;36m
 

@@ -7,8 +7,23 @@
 
 #include "../inc/my_world.h"
 
+int help_menu(int ac, char **av)
+{
+    if (!(ac == 2 && true_cmp(av[1], "-h") == 0))
+        return 0;
+    my_putstr("USAGE: ./my_world [-h | .]\n");
+    my_putstr("\t-h\tdisplay this help menu\n");
+    my_putstr("\t.\tsus ?\n");
+    my_putstr("DESCRIPTION:\n");
+    my_putstr("\tTerraformer simulator.\n");
+    my_putstr("\tCreate your own world or import 3rd party 3d objects.\n");
+    return 1;
+}
+
 int main (int argc, char **argv)
 {
+    if (help_menu(argc, argv))
+        return 0;
     char *name;
     quad_list *root;
     sfMusic *music1 = sfMusic_createFromFile("assets/sounds/minecraft.ogg");
@@ -79,7 +94,7 @@ sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
         }
 
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
-        g->is_typing = (g->curr_menu->data == M_INPUT) ? 1 : 0;
+        g->is_typing = (g->curr_menu != NULL && g->curr_menu->data == M_INPUT) ? 1 : 0;
         if (g->complete == 1 && g->id_menu == 0 && g->curr_menu->data == 3)
             g->curr_menu = callstack_add(g->curr_menu, M_COORDS);
         if (time > 0.00001) {
@@ -201,7 +216,7 @@ void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *w)
     int buttons[5] = {76, 77, 78, 79, 80}, b = 0;
     int x = event.mouseButton.x, y = event.mouseButton.y;
     int is_clicking = (event.type == sfEvtMouseButtonReleased) ? 1 : 0;
-    for (int i = 0;i < 3 && is_clicking == 1;i++) {
+    for (int i = 0;i < 5 && is_clicking == 1;i++) {
         if (sfFloatRect_contains(&g->tb->icons_rect[i + 1], x, y)) {
             move_toolbar_cursor(g->tb, i);
             g->tb->edit_mode = i;
@@ -229,6 +244,7 @@ global *setup_global (char *name, quad_list *root, int bool)
     g->state = 0;
     g->id_menu = 0;
     g->complete = 0;
+    g->complete2 = 0;
     g->x = 1;
     g->y = 1;
     g->root = root;
