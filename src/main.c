@@ -11,14 +11,23 @@ int main (int argc, char **argv)
 {
     char *name;
     quad_list *root;
-    sfRenderWindow *w = spinning_menu(1, &name, &root);
-    return my_world(w, name, root);
+    sfMusic *music1 = sfMusic_createFromFile("assets/sounds/minecraft.ogg");
+    sfMusic *music2 = sfMusic_createFromFile("assets/sounds/amogus.ogg");
+    sfMusic_setLoop(music1, 1);
+    sfMusic_setLoop(music2, 1);
+    if (argc == 1)
+        sfMusic_play(music1);
+    else
+        sfMusic_play(music2);
+    sfRenderWindow *w = spinning_menu(argc - 1, &name, &root);
+    my_world(w, name, root, argc);
+    if (argc == 1)
+        sfMusic_stop(music1);
+    else
+        sfMusic_stop(music2);
+    return 1;
 }
 
-//expérimental donc pas encore propre
-//en gros c ce qui va permettre de faire tourner un modèle dans le menu
-//avec 1 en argument, ça fait tourner amogus et avec 0 ça fait tourner une map
-//du coup il faudra penser à créer une map sympa à faire tourner dans le menu
 sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
 {
     sfVideoMode mode = {800, 600, 32};
@@ -29,12 +38,12 @@ sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
         root = add_object(root, "assets/3d_objects/amogus", (sfVector3f) {-7, -7, -23});
         x = 1.57;
     } else {
-        root = loat_file(root, "save");
+        root = load_file(root, "save");
         z = 0.3;
     }
     sfClock *clock = sfClock_create();
     sfEvent event;
-    global *g = setup_global();
+    global *g = setup_global(NULL, NULL, v);
     g->curr_menu->data = M_MAIN;
     g->is_typing = 0;
     sfRenderWindow_setFramerateLimit(window, 60);
@@ -57,13 +66,17 @@ sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
             }
             if (g->complete2 == 1) {
                 *to_send = create_mesh(g->x, g->y, (sfVector3f) {0, 0, 0}, NULL);
+                return (window);
             }
             if (g->complete == 1 && g->id_menu == 1) {
-                *to_send = loat_file(*to_send, name);
+                *to_send = load_file(NULL, *file);
+                if (*to_send == NULL) {
+                    g->complete = 0;
+                    g->complete2 = 0;
+                } else
+                    return (window);
             }
-            return (window);
         }
-
 
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
         g->is_typing = (g->curr_menu->data == M_INPUT) ? 1 : 0;
@@ -90,7 +103,95 @@ sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
     free(g);
     return 0;
 }
-//
+
+int my_world (sfRenderWindow *window, char *f, quad_list *r, int bool)
+{
+    sfClock *clock = sfClock_create();
+    sfEvent event;
+
+    global *g = setup_global(f, r, bool - 1);
+    g->curr_menu->data = 0;
+
+    float time = 0, zoom = 1, x = 1,  z = 0.3;
+
+    // GAME LOOP
+    sfRenderWindow_setFramerateLimit(window, 60);
+    while (sfRenderWindow_isOpen(window)) {
+        display_fps(g->fps);
+        time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
+
+        // SELCTION HOVER
+        place_circle(g->root, (sfVector2i) {-100, -100}, g->vertex);
+        place_line(g->root, (sfVector2i) {-100, -100}, g->bevel);
+        place_tile(g->root, (sfVector2i) {-100, -100}, g->tile);
+        if (g->tb->edit_mode == 0)
+            place_circle(g->root, sfMouse_getPositionRenderWindow(window), g->vertex);
+        if (g->tb->edit_mode == 1)
+            place_line(g->root, sfMouse_getPositionRenderWindow(window), g->bevel);
+        if (g->tb->edit_mode == 2 || g->tb->edit_mode == 4)
+            place_tile(g->root, sfMouse_getPositionRenderWindow(window), g->tile);
+
+        // EVENT POLL
+        while (sfRenderWindow_pollEvent(window, &event)) {
+            menu_evt(g, &event, window);
+            (g->curr_menu->data == 0) ? event_poll(event, g, g->root, window) : 0;
+            if (event.type == sfEvtKeyReleased && event.key.code == 0) {
+                g->curr_menu->data = (g->curr_menu->data == 0) ? 2 : 0;
+            }
+            (event.type == sfEvtClosed || g->complete2 == 1) ? sfRenderWindow_close(window) : 0;
+        }
+
+        // TIME LOOP
+        if (time > 0.01) {
+            g->fps->frames++;
+            sfRenderWindow_clear(window, sfBlue);
+            g->state = 0;
+            if (event.type == sfEvtKeyPressed || event.mouseWheel.type == 8) {
+                g->state = 1;
+                g->refresh = 1;
+                zoom += event.mouseWheelScroll.delta * 0.1;
+                event.mouseWheelScroll.delta = 0;
+                (event.key.code == sfKeyUp) ? x -= 0.03 : 0;
+                (event.key.code == sfKeyDown) ? x += 0.03 : 0;
+                (event.key.code == sfKeyRight) ? z -= 0.03 : 0;
+                (event.key.code == sfKeyLeft) ? z += 0.03 : 0;
+            }
+
+            (g->refresh == 1) ? update_mesh(g->root, zoom, x, z) : 0;
+            (g->refresh == 1) ? g->root = push_swap(g->root) : 0;
+            g->refresh = 0;
+
+            for (quad_list *ptr = g->root;ptr != NULL; ptr = ptr->next) {
+                if (ptr->display == 1) {
+                    if (g->state == 0)
+                        sfRenderWindow_drawVertexArray(window, ptr->array, ptr->render);
+                    sfRenderWindow_drawVertexArray(window, ptr->strip, NULL);
+                }
+            }
+
+            sfRenderWindow_drawText(window, g->fps->text, NULL);
+            sfRenderWindow_drawVertexArray(window, g->bevel, NULL);
+            sfRenderWindow_drawVertexArray(window, g->tile, NULL);
+            sfRenderWindow_drawCircleShape(window, g->vertex, NULL);
+            render_toolbar(window, g->tb);
+            render_menu(window, g);
+            sfRenderWindow_display(window);
+            sfClock_restart(clock);
+        }
+
+    }
+
+    // FREE ZONE
+    free_quad_list(g->root);
+    sfVertexArray_destroy(g->tile);
+    sfVertexArray_destroy(g->bevel);
+    sfCircleShape_destroy(g->vertex);
+    free(g);
+    sfRenderWindow_destroy(window);
+    //
+
+    return 0;
+}
 
 //j'ai mis ça a la norme
 //en gros si tu veux ajouter un outils dans ta tool bar t'as juste a ajouter son keycode dans le tableau "buttons" && modifier la valeur d'arrêt
@@ -120,94 +221,7 @@ void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *w)
 }
 //
 
-
-//on peut encore bcp séquencer mais comme je pense qu'on va ajouter && modifier des choses...
-int my_world (sfRenderWindow *window, char *file, quad_list *root)
-{
-
-
-    sfClock *clock = sfClock_create();
-    sfEvent event;
-
-    global *g = setup_global();
-
-    float time = 0, zoom = 1, x = 1,  z = 0.3;
-
-    // GAME LOOP
-    sfRenderWindow_setFramerateLimit(window, 60);
-    while (sfRenderWindow_isOpen(window)) {
-        display_fps(g->fps);
-        time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
-
-        // SELCTION HOVER
-        place_circle(root, (sfVector2i) {-100, -100}, g->vertex);
-        place_line(root, (sfVector2i) {-100, -100}, g->bevel);
-        place_tile(root, (sfVector2i) {-100, -100}, g->tile);
-        if (g->tb->edit_mode == 0)
-            place_circle(root, sfMouse_getPositionRenderWindow(window), g->vertex);
-        if (g->tb->edit_mode == 1)
-            place_line(root, sfMouse_getPositionRenderWindow(window), g->bevel);
-        if (g->tb->edit_mode == 2 || g->tb->edit_mode == 4)
-            place_tile(root, sfMouse_getPositionRenderWindow(window), g->tile);
-
-        // EVENT POLL
-        while (sfRenderWindow_pollEvent(window, &event)) {
-            event_poll(event, g, root, window);
-            (event.type == sfEvtClosed) ? sfRenderWindow_close(window) : 0;
-        }
-
-        // TIME LOOP
-        if (time > 0.00000000001) {
-            g->fps->frames++;
-            sfRenderWindow_clear(window, sfBlue);
-            g->state = 0;
-            if (event.type == sfEvtKeyPressed ||  event.mouseWheel.type == 8) {
-                g->state = 1;
-                g->refresh = 1;
-                zoom += event.mouseWheelScroll.delta * 0.1;
-                event.mouseWheelScroll.delta = 0;
-                (event.key.code == sfKeyUp) ? x -= 0.03 : 0;
-                (event.key.code == sfKeyDown) ? x += 0.03 : 0;
-                (event.key.code == sfKeyRight) ? z -= 0.03 : 0;
-                (event.key.code == sfKeyLeft) ? z += 0.03 : 0;
-            }
-
-            (g->refresh == 1) ? update_mesh(root, zoom, x, z) : 0;
-            (g->refresh == 1) ? root = push_swap(root) : 0;
-            g->refresh = 0;
-
-            for (quad_list *ptr = root;ptr != NULL; ptr = ptr->next) {
-                if (ptr->display == 1) {
-                    if (g->state == 0)
-                        sfRenderWindow_drawVertexArray(window, ptr->array, ptr->render);
-                    sfRenderWindow_drawVertexArray(window, ptr->strip, NULL);
-                }
-            }
-
-            sfRenderWindow_drawText(window, g->fps->text, NULL);
-            sfRenderWindow_drawVertexArray(window, g->bevel, NULL);
-            sfRenderWindow_drawVertexArray(window, g->tile, NULL);
-            sfRenderWindow_drawCircleShape(window, g->vertex, NULL);
-            render_toolbar(window, g->tb);
-            sfRenderWindow_display(window);
-            sfClock_restart(clock);
-        }
-
-    }
-
-    // FREE ZONE
-    free_quad_list(root);
-    sfVertexArray_destroy(g->tile);
-    sfVertexArray_destroy(g->bevel);
-    sfCircleShape_destroy(g->vertex);
-    free(g);
-    sfRenderWindow_destroy(window);
-    //
-
-    return 0;
-}
-
-global *setup_global (void)
+global *setup_global (char *name, quad_list *root, int bool)
 {
     global *g = malloc(sizeof(global));
     g->apply_mode = 0;
@@ -217,6 +231,8 @@ global *setup_global (void)
     g->complete = 0;
     g->x = 1;
     g->y = 1;
+    g->root = root;
+    g->name = name;
     g->vertex = sfCircleShape_create();
     sfCircleShape_setRadius(g->vertex, 5);
     sfCircleShape_setFillColor(g->vertex, sfBlack);
@@ -241,6 +257,10 @@ global *setup_global (void)
     g->fps = fps_init();
 
     // MENU
+    if (bool == 1)
+        g->click = sfMusic_createFromFile("assets/sounds/click1.ogg");
+    else
+        g->click = sfMusic_createFromFile("assets/sounds/click2.ogg");
     g->is_typing = 0;
     g->curr_menu = callstack_init();
     g->cursor = 0;
@@ -256,7 +276,6 @@ global *setup_global (void)
     return g;
 }
 
-//pour vérifier si un triangle est hors screen ou pas
 int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem)
 {
     int e = 0;

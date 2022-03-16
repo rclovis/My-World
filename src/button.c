@@ -56,23 +56,20 @@ button_t *button_init(const char *text, sfFont *font, sfTexture *texture)
 menu_t *pause_menu_init(sfFont *font, sfTexture *button_texture)
 {
     menu_t *menu = malloc(sizeof(menu_t));
-    menu->buttons = malloc(sizeof(button_t *) * 5);
+    menu->buttons = malloc(sizeof(button_t *) * 4);
 
     menu->buttons[0] = button_init("RESUME", font, button_texture);
-    menu->buttons[1] = button_init("LOAD", font, button_texture);
-    menu->buttons[2] = button_init("SAVE", font, button_texture);
-    menu->buttons[3] = button_init("QUIT", font, button_texture);
-    menu->buttons[4] = NULL;
+    menu->buttons[1] = button_init("SAVE", font, button_texture);
+    menu->buttons[2] = button_init("QUIT", font, button_texture);
+    menu->buttons[3] = NULL;
 
     sfSprite_setPosition(menu->buttons[0]->sprite, (sfVector2f) {200, 200});
     sfSprite_setPosition(menu->buttons[1]->sprite, (sfVector2f) {200, 250});
     sfSprite_setPosition(menu->buttons[2]->sprite, (sfVector2f) {200, 300});
-    sfSprite_setPosition(menu->buttons[3]->sprite, (sfVector2f) {200, 350});
 
     sfText_setPosition(menu->buttons[0]->text, (sfVector2f) {350, 200});
     sfText_setPosition(menu->buttons[1]->text, (sfVector2f) {350, 250});
     sfText_setPosition(menu->buttons[2]->text, (sfVector2f) {350, 300});
-    sfText_setPosition(menu->buttons[3]->text, (sfVector2f) {350, 350});
 
     for (int i = 0; menu->buttons[i] != NULL; i++) {
         menu->buttons[i]->collision_box = sfSprite_getGlobalBounds(

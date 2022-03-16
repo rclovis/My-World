@@ -78,9 +78,10 @@ int save_points (quad_list *ptr, FILE *stream)
     }
 }
 
-quad_list *loat_file (quad_list *root, char *file)
+quad_list *load_file (quad_list *root, char *file)
 {
     char **object = file_str(file);
+    if (object == NULL) return NULL;
     quad_list *ptr = NULL;
     sfTexture *tx = sfTexture_createFromFile("assets/textures/textures.png", 0);
     char **t = NULL;

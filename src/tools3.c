@@ -12,6 +12,7 @@ char **file_str (char *file_name)
     int size = 0, h = 0, return_val = 0;
     size_t len = 0;
     FILE *f = fopen(file_name, "r");
+    if (f == NULL || true_cmp("assets/3d_objects/", file_name) == 0) return 0;
     word *root = malloc(sizeof(word)), *p = root, *p1 = root, *temp = root;
     while (return_val != -1) {
         p->str = NULL;

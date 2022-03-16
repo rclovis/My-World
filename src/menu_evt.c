@@ -53,10 +53,12 @@ void input_menu_button_on_click(global *g, sfEvent *evt)
     if (evt->type == 10 && g->curr_menu->data == M_INPUT) {
         if (sfFloatRect_contains(&menu->buttons[1]->collision_box, x, y)) {
             g->is_typing = 0;
+            play_music(g->click);
             g->complete = 1;
         }
         if (sfFloatRect_contains(&menu->buttons[2]->collision_box, x, y)) {
             g->is_typing = 0;
+            play_music(g->click);
             g->curr_menu = callstack_del(g->curr_menu);
         }
     }
@@ -85,10 +87,12 @@ void coords_menu_button_on_click(global *g, sfEvent *evt, sfRenderWindow* w)
     }
     if (g->curr_menu->data == M_COORDS && evt->type == 10) {
         if (sfFloatRect_contains(&menu->buttons[2]->collision_box, x, y)) {
+            play_music(g->click);
             g->complete2 = 1;
         }
         if (sfFloatRect_contains(&menu->buttons[3]->collision_box, x, y)) {
             g->curr_menu = callstack_del(g->curr_menu);
+            play_music(g->click);
             g->complete = 0;
         }
     }
@@ -107,18 +111,17 @@ void pause_menu_button_on_click(global *g, sfEvent *evt)
     int y = evt->mouseButton.y;
     if (evt->type == 10 && g->curr_menu->data == M_PAUSE) {
         if (sfFloatRect_contains(&menu->buttons[0]->collision_box, x, y)) {
-            g->curr_menu = callstack_del(g->curr_menu);
+            play_music(g->click);
+            g->curr_menu->data = 0;
         }
         if (sfFloatRect_contains(&menu->buttons[1]->collision_box, x, y)) {
-            g->is_typing = 1;
-            g->curr_menu = callstack_add(g->curr_menu, M_INPUT);
+            play_music(g->click);
+            save_file(g->root, g->name);
         }
         if (sfFloatRect_contains(&menu->buttons[2]->collision_box, x, y)) {
-            g->is_typing = 1;
-            g->curr_menu = callstack_add(g->curr_menu, M_INPUT);
-        }
-        if (sfFloatRect_contains(&menu->buttons[3]->collision_box, x, y)) {
-            g->curr_menu = callstack_del(g->curr_menu);
+            g->curr_menu->data = 0;
+            play_music(g->click);
+            g->complete2 = 1;
         }
     }
 }
@@ -133,14 +136,24 @@ void main_menu_button_on_click(global *g, sfEvent *evt)
     if (evt->type == 10 && g->curr_menu->data == M_MAIN) {
         if (sfFloatRect_contains(&menu->buttons[0]->collision_box, x, y)) {
             g->is_typing = 1;
+            play_music(g->click);
             g->curr_menu = callstack_add(g->curr_menu, M_INPUT);
         }
         if (sfFloatRect_contains(&menu->buttons[1]->collision_box, x, y)) {
             g->is_typing = 1;
+            play_music(g->click);
             g->curr_menu = callstack_add(g->curr_menu, M_INPUT);
         }
         if (sfFloatRect_contains(&menu->buttons[2]->collision_box, x, y)) {
+            play_music(g->click);
             g->curr_menu = callstack_del(g->curr_menu);
         }
     }
+}
+
+
+int play_music (sfMusic *music)
+{
+        sfMusic_stop(music);
+    sfMusic_play(music);
 }

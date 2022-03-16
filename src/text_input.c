@@ -14,9 +14,7 @@ void currently_typing(global *g, sfEvent *evt)
         g->input_buffer[g->cursor] = 0;
     } else if (evt->text.unicode == ENTER) {
         g->is_typing = 0;
-        for (int i = 0; i < INPUT_BUFFER_SIZE; i++)
-            g->input_buffer[i] = 0;
-        g->cursor = 0;
+        g->complete = 1;
     } else if (g->cursor < INPUT_BUFFER_SIZE - 1) {
         g->input_buffer[g->cursor] = evt->text.unicode;
         g->cursor++;

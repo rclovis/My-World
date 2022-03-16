@@ -14,6 +14,8 @@
 	#include <math.h>
 	#include <SFML/Audio.h>
 	#include <SFML/Graphics.h>
+	#include <sys/types.h>
+	#include <dirent.h>
 	#include "my.h"
 
 // MENU VALUES
@@ -107,6 +109,10 @@ struct global {
 	// fps
 	fps_t *fps;
 
+	//save
+	char *name;
+	quad_list *root;
+
 	// menu
 	callstack_t *curr_menu;
 	int is_typing;
@@ -118,6 +124,7 @@ struct global {
 	int complete2;
 	int x;
 	int y;
+	sfMusic *click;
 	sfFont *pixel_font;
 	sfTexture *button_texture;
 	menu_t *main_menu;
@@ -134,9 +141,9 @@ struct linked_vertex {
 	linked_vertex *next;
 };
 
-int my_world (sfRenderWindow *window, char *file, quad_list *root);
+int my_world (sfRenderWindow *window, char *f, quad_list *r, int bool);
 void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *window);
-global *setup_global (void);
+global *setup_global (char *name, quad_list *root, int bool);
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g);
 int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem);
 sfRenderWindow *spinning_menu (int v, char **file, quad_list **root);
@@ -205,7 +212,7 @@ float** set_hooked_point (linked_vertex *vl, char **t, quad_list *ptr, int i);
 
 //save & load files
 char *float_to_str (double nbr);
-quad_list *loat_file (quad_list *root, char *file);
+quad_list *load_file (quad_list *root, char *file);
 int save_file (quad_list *root, char *name);
 int save_points (quad_list *ptr, FILE *stream);
 //
@@ -238,10 +245,10 @@ void menu_button_hover(global *g, sfEvent *evt);
 void menu_evt(global *g, sfEvent *evt, sfRenderWindow *window);
 menu_t *coords_menu_init(sfFont *font, sfTexture *button_texture);
 void coords_menu_button_on_click(global *g, sfEvent *evt, sfRenderWindow* w);
+int play_music (sfMusic *music);
 
 // TYPING INPUT
 void activate_typing(global *g);
 void currently_typing(global *g, sfEvent *evt);
-
 
 #endif
