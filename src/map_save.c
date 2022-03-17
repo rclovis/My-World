@@ -33,22 +33,22 @@ char *float_to_str (double nbr)
 
 int save_file (quad_list *root, char *name)
 {
-    char *line = NULL, *temp = NULL;
+    char *line = NULL, *t = NULL;
     int len = 0;
     FILE *stream = fopen(name, "w");
-    for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next, free(temp)) {
-        save_points(ptr, stream);
+    for (quad_list *p = root;p != NULL;p = p->next, free(t)) {
+        save_points(p, stream);
         for (int i = 0;i < 3;fwrite(" ", 1, 1, stream), i++) {
-            temp = float_to_str(sfVertexArray_getVertex(ptr->array, i)->texCoords.x);
-            fwrite(temp, my_strlen(temp), 1, stream);
-            free(temp);
+            t = float_to_str(sfVertexArray_getVertex(p->array, i)->texCoords.x);
+            fwrite(t, my_strlen(t), 1, stream);
+            free(t);
             fwrite(" ", 1, 1, stream);
-            temp = float_to_str(sfVertexArray_getVertex(ptr->array, i)->texCoords.y);
-            fwrite(temp, my_strlen(temp), 1, stream);
-            free(temp);
+            t = float_to_str(sfVertexArray_getVertex(p->array, i)->texCoords.y);
+            fwrite(t, my_strlen(t), 1, stream);
+            free(t);
         }
-        temp = int_to_char(ptr->n_texture);
-        fwrite(temp, my_strlen(temp), 1, stream);
+        t = int_to_char(p->n_texture);
+        fwrite(t, my_strlen(t), 1, stream);
         fwrite("\n", 1, 1, stream);
     }
     return 0;
@@ -80,14 +80,13 @@ int save_points (quad_list *ptr, FILE *stream)
 
 quad_list *load_file (quad_list *root, char *file)
 {
-    char **object = file_str(file);
+    char **object = file_str(file), **t = NULL;
     if (object == NULL) return NULL;
     quad_list *ptr = NULL;
     sfTexture *tx = sfTexture_createFromFile("assets/textures/textures.png", 0);
-    char **t = NULL;
     for (int i = 0;object[i] != NULL;ptr->next = root, root = ptr, i++) {
         t = my_2d_array_str_split(&object[i][2], ' ');
-        ptr = tri_one(0, 0, 0 ,NULL);
+        ptr = tri_one(0, 0, 0, 0);
         sfVertexArray_getVertex(ptr->array, 0)->texCoords.x = my_getnbr2(t[9]);
         sfVertexArray_getVertex(ptr->array, 0)->texCoords.y = my_getnbr2(t[10]);
         sfVertexArray_getVertex(ptr->array, 1)->texCoords.x = my_getnbr2(t[11]);

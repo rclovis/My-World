@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2021
 ** my_strncmp
 ** File description:
-** strncmp
+** my_strncmp
 */
 
 #include "my.h"

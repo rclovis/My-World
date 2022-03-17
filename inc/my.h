@@ -11,7 +11,7 @@
     #include <stdlib.h>
     #include <stdio.h>
     #include <SFML/Audio.h>
-	#include <SFML/Graphics.h>
+    #include <SFML/Graphics.h>
 
 typedef struct node node;
 struct node {
@@ -33,12 +33,12 @@ struct quad_list {
     float **p2;
     float **p3;
     int display;
-	int nbr;
+    int nbr;
     int n_texture;
-	sfVector3f center;
-	sfVector3f n;
-	sfRenderStates *render;
-	quad_list *next;
+    sfVector3f center;
+    sfVector3f n;
+    sfRenderStates *render;
+    quad_list *next;
 };
 
 quad_list *rotate (quad_list *root, quad_list **ptra);

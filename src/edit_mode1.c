@@ -40,7 +40,8 @@ void loop_button (int *button, int *n_texture)
     }
 }
 
-int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g)
+int clic_management (sfEvent *event, quad_list *root,
+sfRenderWindow *window, global *g)
 {
     sfVector2f mpos2 = sfRenderWindow_mapPixelToCoords(window,
     sfMouse_getPositionRenderWindow(window), NULL);

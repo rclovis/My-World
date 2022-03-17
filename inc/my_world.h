@@ -148,6 +148,9 @@ global *setup_global (char *name, quad_list *root, int bool);
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window, global *g);
 int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem);
 sfRenderWindow *spinning_menu (int v, char **file, quad_list **root);
+void setup_global2 (global *g, int bool);
+void setup_global3 (global *g);
+sfRenderStates *render_setup (sfTexture *texture);
 
 //create mesh
 quad_list *create_mesh (int x, int y, sfVector3f pos, quad_list *root);
