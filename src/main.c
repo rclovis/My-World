@@ -65,11 +65,11 @@ sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
     while (sfRenderWindow_isOpen(w)) {
         while (sfRenderWindow_pollEvent(w, &event)) {
             menu_evt(g, &event, w);
-            (event.type == sfEvtClosed) ? sfRenderWindow_close(w) : 0;
+            (event.type == sfEvtClosed || g->curr_menu == NULL ) ? sfRenderWindow_close(w) : 0;
         }
 
 
-        if (g->curr_menu == NULL || g->complete2 == 1 || g->complete == 1 && g->id_menu == 1) {
+        if (g->complete2 == 1 || g->complete == 1 && g->id_menu == 1) {
             char *name = malloc(sizeof(char) * 21);
             name[20] = '\0';
             for (int i = 0; i < 20; i++)
@@ -121,6 +121,7 @@ sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
 
 int my_world (sfRenderWindow *w, char *f, quad_list *r, int bool)
 {
+    if (w == 0) return 0;
     sfClock *clock = sfClock_create();
     sfEvent event;
     global *g = setup_global(f, r, bool - 1);
@@ -140,12 +141,12 @@ int my_world (sfRenderWindow *w, char *f, quad_list *r, int bool)
         if (g->tb->edit_mode == 2 || g->tb->edit_mode == 4)
             place_tile(g->root, sfMouse_getPositionRenderWindow(w), g->tile);
         while (sfRenderWindow_pollEvent(w, &event)) {
+            (event.type == 0 || g->complete2 == 1) ? sfRenderWindow_close(w) : 0;
             menu_evt(g, &event, w);
             (g->curr_menu->data == 0) ? event_poll(event, g, g->root, w) : 0;
             if (event.type == sfEvtKeyReleased && event.key.code == 0) {
                 g->curr_menu->data = (g->curr_menu->data == 0) ? 2 : 0;
             }
-            (event.type == 0 || g->complete2 == 1) ? sfRenderWindow_close(w) : 0;
         }
         if (time > 0.01) {
             g->fps->frames++;

@@ -151,6 +151,7 @@ sfRenderWindow *spinning_menu (int v, char **file, quad_list **root);
 void setup_global2 (global *g, int bool);
 void setup_global3 (global *g);
 sfRenderStates *render_setup (sfTexture *texture);
+int coding_style2 (sfVector2f v1, sfVector2f v2, sfVertexArray *bevel);
 
 //create mesh
 quad_list *create_mesh (int x, int y, sfVector3f pos, quad_list *root);

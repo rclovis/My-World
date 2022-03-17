@@ -9,26 +9,22 @@
 
 void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c)
 {
-    sfVector2f p1, p2, p3, p4;
-    sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
+    sfVector2f p1, p2, p3, p4, *p = malloc(sizeof(sfVector2f) * 4);
     for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
         if (ptr->display == 0) continue;
         for (int i = 0;i < 4;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
         if (approximation(p[0].x, m.x, 10) && approximation(p[0].y, m.y, 10)) {
             sfCircleShape_setPosition(c, (sfVector2f) {p[0].x, p[0].y});
-            free(p);
-            return;
+            return free(p);
         }
         if (approximation(p[1].x, m.x, 10) && approximation(p[1].y, m.y, 10)) {
             sfCircleShape_setPosition(c, (sfVector2f) {p[1].x, p[1].y});
-            free(p);
-            return;
+            return free(p);
         }
         if (approximation(p[2].x, m.x, 10) && approximation(p[2].y, m.y, 10)) {
             sfCircleShape_setPosition(c, (sfVector2f) {p[2].x, p[2].y});
-            free(p);
-            return;
+            return free(p);
         }
     }
     sfCircleShape_setPosition(c, (sfVector2f) {-100, -100});
@@ -38,27 +34,20 @@ void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c)
 void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel)
 {
     sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
-    float a = 0, b = 0;
     for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
         for (int i = 0;i < 4;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
         if (is_between(p[0], p[1], m)) {
-            sfVertexArray_getVertex(bevel, 0)->position = p[0];
-            sfVertexArray_getVertex(bevel, 1)->position = p[1];
-            free(p);
-            return;
+            coding_style2(p[0], p[1], bevel);
+            return free(p);
         }
         if (is_between(p[1], p[2], m)) {
-            sfVertexArray_getVertex(bevel, 0)->position = p[1];
-            sfVertexArray_getVertex(bevel, 1)->position = p[2];
-            free(p);
-            return;
+            coding_style2(p[1], p[2], bevel);
+            return free(p);
         }
         if (is_between(p[2], p[0], m)) {
-            sfVertexArray_getVertex(bevel, 0)->position = p[2];
-            sfVertexArray_getVertex(bevel, 1)->position = p[0];
-            free(p);
-            return;
+            coding_style2(p[2], p[0], bevel);
+            return free(p);
         }
     }
     sfVertexArray_getVertex(bevel, 0)->position = (sfVector2f) {-100, -100};
@@ -106,9 +95,12 @@ int is_between (sfVector2f p1, sfVector2f p2, sfVector2i m)
 {
     sfVector2f v1 = {p2.x - p1.x, p2.y - p1.y};
     sfVector2f v2 = {m.x - p1.x, m.y - p1.y};
-    if (approximation(v1.x * v2.y - v1.y * v2.x, 0, 5 * sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2))) == 0)
+    float tmp1 = v1.x * v2.y - v1.y * v2.x;
+    float tmp2 = 5 * sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+    float tmp3 = v1.x * v2.x + v1.y * v2.y;
+    if (approximation(tmp1, 0, tmp2) == 0)
         return (0);
-    if (0 < v1.x * v2.x + v1.y * v2.y  && v1.x * v2.x + v1.y * v2.y < v1.x * v1.x + v1.y * v1.y)
+    if (0 < tmp3 && tmp3 < v1.x * v1.x + v1.y * v1.y)
         return (1);
     return (0);
 }

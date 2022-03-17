@@ -101,3 +101,9 @@ quad_list *load_file (quad_list *root, char *file)
     }
     return root;
 }
+
+int coding_style2 (sfVector2f v1, sfVector2f v2, sfVertexArray *bevel)
+{
+    sfVertexArray_getVertex(bevel, 0)->position = v1;
+    sfVertexArray_getVertex(bevel, 1)->position = v2;
+}
