@@ -19,5 +19,6 @@ void currently_typing(global *g, sfEvent *evt)
         g->input_buffer[g->cursor] = evt->text.unicode;
         g->cursor++;
     }
-    sfText_setUnicodeString(g->input_menu->buttons[0]->text, (const sfUint32 *) g->input_buffer);
+    sfText_setUnicodeString(g->input_menu->buttons[0]->text,
+        (const sfUint32 *) g->input_buffer);
 }
