@@ -7,11 +7,29 @@
 
 #include "my_world.h"
 
+void my_sprintf(fps_t *fps)
+{
+    int pow = 1;
+    int i = 0;
+    if (fps->frames == 0) {
+        fps->buffer[i] = '0';
+        i++;
+    }
+    while (fps->frames / (pow * 10) != 0)
+        pow = pow * 10;
+    for (pow;pow - 1 >= 0;pow = pow / 10) {
+        fps->buffer[i] = ((48 + (fps->frames / pow)));
+        fps->frames = fps->frames - ((fps->frames / pow) * pow);
+        i++;
+    }
+    fps->buffer[i] = 0;
+}
+
 void display_fps(fps_t *fps)
 {
     if (sfClock_getElapsedTime(fps->clock).microseconds > 1000000) {
         my_setmem(fps->buffer, 10);
-        sprintf(fps->buffer, "%d", fps->frames);
+        my_sprintf(fps);
         sfText_setString(fps->text, fps->buffer);
         fps->frames = 0;
         sfClock_restart(fps->clock);

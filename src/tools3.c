@@ -57,6 +57,10 @@ global *setup_global (char *name, quad_list *root, int bool)
     g->root = root;
     g->name = name;
     setup_global2(g, bool);
+    g->zoom = 1;
+    g->x = 1;
+    g->z = 0;
+    g->v = bool;
     g->curr_menu = callstack_init();
     g->pixel_font = sfFont_createFromFile("assets/fonts/pixel.ttf");
     g->button_texture = sfTexture_createFromFile("assets/gui/button.png", NULL);
@@ -64,6 +68,7 @@ global *setup_global (char *name, quad_list *root, int bool)
     g->input_menu = input_menu_init(g->pixel_font, g->button_texture);
     g->pause_menu = pause_menu_init(g->pixel_font, g->button_texture);
     g->coords_menu = coords_menu_init(g->pixel_font, g->button_texture);
+    g->is_typing = 0;
     for (int i = 0; i < INPUT_BUFFER_SIZE; i++)
         g->input_buffer[i] = 0;
     return g;
