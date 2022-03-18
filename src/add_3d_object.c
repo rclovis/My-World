@@ -44,7 +44,7 @@ quad_list *add_object (quad_list *root, char *file, sfVector3f pos)
 {
     char **object = file_str(file), **temp = NULL;
     quad_list *ptr = NULL;
-    float **zoom = multiply1(x_rotation(1.57), zoom_matrix(15), 3, 3), **mx = 0;
+    float **zoom = multiply1(x_rotation(1.57), zoom_matrix(15), 3, 3);
     linked_vertex *vertex_list = get_vertex(object, pos), *hook = NULL;
     for (int i = 0;object[i] != NULL;i++) {
         if (object[i][0] == 'f') {
@@ -60,25 +60,25 @@ quad_list *add_object (quad_list *root, char *file, sfVector3f pos)
     return root;
 }
 
-float** set_hooked_point (linked_vertex *vl, char **t, quad_list *ptr, int i)
+float **set_hooked_point (linked_vertex *vl, char **t, quad_list *ptr, int i)
 {
     linked_vertex *hook = hook_vertex(vl, my_getnbr2(t[i]));
-    float **zoom = multiply1(x_rotation(1.57), zoom_matrix(15), 3, 3), **mx = 0;
+    float **zoom = multiply1(x_rotation(1.57), zoom_matrix(15), 3, 3), **m = 0;
     sfVertexArray_getVertex(ptr->array, i)->color = sfRed;
     (i == 0) ? ptr->p1[0][0] = hook->x : 0;
     (i == 0) ? ptr->p1[1][0] = hook->y : 0;
     (i == 0) ? ptr->p1[2][0] = hook->z : 0;
-    (i == 0) ? mx = multiply1(zoom, ptr->p1, 3, 1) : 0;
+    (i == 0) ? m = multiply1(zoom, ptr->p1, 3, 1) : 0;
     (i == 0) ? free(ptr->p1) : 0;
     (i == 1) ? ptr->p2[0][0] = hook->x : 0;
     (i == 1) ? ptr->p2[1][0] = hook->y : 0;
     (i == 1) ? ptr->p2[2][0] = hook->z : 0;
-    (i == 1) ? mx = multiply1(zoom, ptr->p2, 3, 1) : 0;
+    (i == 1) ? m = multiply1(zoom, ptr->p2, 3, 1) : 0;
     (i == 1) ? free(ptr->p2) : 0;
     (i == 2) ? ptr->p3[0][0] = hook->x : 0;
     (i == 2) ? ptr->p3[1][0] = hook->y : 0;
     (i == 2) ? ptr->p3[2][0] = hook->z : 0;
-    (i == 2) ? mx = multiply1(zoom, ptr->p3, 3, 1) : 0;
+    (i == 2) ? m = multiply1(zoom, ptr->p3, 3, 1) : 0;
     (i == 2) ? free(ptr->p3) : 0;
-    return mx;
+    return m;
 }

@@ -7,7 +7,6 @@
 
 #include "../inc/my_world.h"
 
-
 float **projection_matrix (void)
 {
     float *l1 = malloc(sizeof(float) * 3), *l2 = malloc(sizeof(float) * 3);

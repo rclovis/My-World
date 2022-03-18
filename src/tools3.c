@@ -100,6 +100,7 @@ void setup_global2 (global *g, int bool)
 
 void setup_global3 (global *g)
 {
+    g->x2 = 1;
     g->apply_mode = 0;
     g->refresh = 1;
     g->state = 0;
