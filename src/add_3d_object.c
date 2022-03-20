@@ -7,16 +7,16 @@
 
 #include "../inc/my_world.h"
 
-linked_vertex *get_vertex (char **object, sfVector3f pos)
+linked_vertex_t *get_vertex (char **object, sfVector3f pos)
 {
     char **temp = NULL;
-    linked_vertex *root = malloc(sizeof(linked_vertex));
-    linked_vertex *ptr = root;
+    linked_vertex_t *root = malloc(sizeof(linked_vertex_t));
+    linked_vertex_t *ptr = root;
     root->next = NULL;
     for (int i = 0;object[i] != NULL;i++) {
         if (object[i][0] == 'v' && object[i][1] == ' ') {
             temp = my_2d_array_str_split(&object[i][2], ' ');
-            ptr->next = malloc(sizeof(linked_vertex));
+            ptr->next = malloc(sizeof(linked_vertex_t));
             ptr = ptr->next;
             ptr->next = NULL;
             ptr->x = my_atof(temp[0]) + pos.x;
@@ -31,9 +31,9 @@ linked_vertex *get_vertex (char **object, sfVector3f pos)
     return (root->next);
 }
 
-linked_vertex *hook_vertex (linked_vertex *root, int i)
+linked_vertex_t *hook_vertex (linked_vertex_t *root, int i)
 {
-    linked_vertex *ptr = root;
+    linked_vertex_t *ptr = root;
     for (int j = 0;j < i - 1;j++) {
         ptr = ptr->next;
     }
@@ -45,7 +45,7 @@ quad_list *add_object (quad_list *root, char *file, sfVector3f pos)
     char **object = file_str(file), **temp = NULL;
     quad_list *ptr = NULL;
     float **zoom = multiply1(x_rotation(1.57), zoom_matrix(15), 3, 3);
-    linked_vertex *vertex_list = get_vertex(object, pos), *hook = NULL;
+    linked_vertex_t *vertex_list = get_vertex(object, pos), *hook = NULL;
     for (int i = 0;object[i] != NULL;i++) {
         if (object[i][0] == 'f') {
             temp = my_2d_array_str_split(&object[i][2], ' ');
@@ -60,9 +60,9 @@ quad_list *add_object (quad_list *root, char *file, sfVector3f pos)
     return root;
 }
 
-float **set_hooked_point (linked_vertex *vl, char **t, quad_list *ptr, int i)
+float **set_hooked_point (linked_vertex_t *vl, char **t, quad_list *ptr, int i)
 {
-    linked_vertex *hook = hook_vertex(vl, my_getnbr2(t[i]));
+    linked_vertex_t *hook = hook_vertex(vl, my_getnbr2(t[i]));
     float **zoom = multiply1(x_rotation(1.57), zoom_matrix(15), 3, 3), **m = 0;
     sfVertexArray_getVertex(ptr->array, i)->color = sfRed;
     (i == 0) ? ptr->p1[0][0] = hook->x : 0;

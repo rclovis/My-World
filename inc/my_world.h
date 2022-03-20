@@ -100,13 +100,12 @@ struct global {
     sfCircleShape *vertex;
 };
 
-typedef struct linked_vertex linked_vertex;
-struct linked_vertex {
+typedef struct linked_vertex {
     float x;
     float y;
     float z;
-    linked_vertex *next;
-};
+    struct linked_vertex *next;
+} linked_vertex_t;
 
 quad_list *spinning_clock(sfClock *c, sfRenderWindow *w, quad_list *root,
 global *g);
@@ -125,7 +124,7 @@ float **x_rotation (float r);
 float **zoom_matrix (float zoom);
 float multiply2 (float **m1, float **m2, int x, int y);
 float my_atof (char *str);
-float ** set_hooked_point (linked_vertex *vl, char **t, quad_list *ptr, int i);
+float ** set_hooked_point (linked_vertex_t *vl, char **t, quad_list *ptr, int i);
 fps_t *fps_init(void);
 global *setup_global (char *name, quad_list *root, int bool);
 int approximation (int i, int j, int delta);
@@ -146,8 +145,8 @@ int raise_line_bis (quad_list *root, sfVector2i m, sfVector2i bs,
 sfVector2f *p);
 int save_file (quad_list *root, char *name);
 int save_points (quad_list *ptr, FILE *stream);
-linked_vertex *get_vertex (char **object, sfVector3f pos);
-linked_vertex *hook_vertex (linked_vertex *root, int i);
+linked_vertex_t *get_vertex (char **object, sfVector3f pos);
+linked_vertex_t *hook_vertex (linked_vertex_t *root, int i);
 long long my_getnbr2 (const char *str);
 menu_t * get_curr_menu(global *g);
 menu_t *coords_menu_init(sfFont *font, sfTexture *button_texture);
