@@ -7,7 +7,7 @@
 
 #include "my_world.h"
 
-quad_list *spin_clock(sfClock *c, sfRenderWindow *w, quad_list *r, global *g)
+quad_list *spin_clock(sfClock *c, sfRenderWindow *w, quad_list *r, global_t *g)
 {
     float time = sfClock_getElapsedTime(c).microseconds / 2500000.0;
     g->is_typing = (g->curr_menu != 0 && g->curr_menu->data == 3) ? 1 : 0;
@@ -19,7 +19,7 @@ quad_list *spin_clock(sfClock *c, sfRenderWindow *w, quad_list *r, global *g)
     return r;
 }
 
-quad_list *thing(global *g, quad_list *root)
+quad_list *thing(global_t *g, quad_list *root)
 {
     if (g->v == 1) {
         root = add_object(root, "assets/3d_objects/amogus",
@@ -32,7 +32,7 @@ quad_list *thing(global *g, quad_list *root)
     return root;
 }
 
-void aled (global *g, char **file, quad_list **to_send)
+void aled (global_t *g, char **file, quad_list **to_send)
 {
     char *name = malloc(sizeof(char) * 21), *path = "assets/3d_objects/amogus";
     name[20] = '\0';
@@ -60,7 +60,7 @@ sfRenderWindow *spinning_menu (int v, char **file, quad_list **to_send)
 {
     sfRenderWindow *w = win_init();
     quad_list *root = NULL;
-    global *g = setup_global(NULL, NULL, v);
+    global_t *g = setup_global(NULL, NULL, v);
     g->curr_menu->data = M_MAIN;
     root = thing(g, root);
     sfClock *clock = sfClock_create();

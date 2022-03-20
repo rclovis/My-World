@@ -15,7 +15,7 @@ sfRenderWindow *win_init(void)
     return w;
 }
 
-void spinning_evt(sfRenderWindow *w, sfEvent *evt, global *g)
+void spinning_evt(sfRenderWindow *w, sfEvent *evt, global_t *g)
 {
     while (sfRenderWindow_pollEvent(w, evt)) {
         menu_evt(g, evt, w);
@@ -24,7 +24,7 @@ void spinning_evt(sfRenderWindow *w, sfEvent *evt, global *g)
     }
 }
 
-quad_list *in_spin_time(sfRenderWindow *w, quad_list *r, global *g, sfClock *c)
+quad_list *in_spin_time(sfRenderWindow *w, quad_list *r, global_t *g, sfClock *c)
 {
     g->z += (g->v == 1) ? 0.05 : 0.01;
     sfRenderWindow_clear(w, sfBlue);

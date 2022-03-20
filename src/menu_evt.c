@@ -7,7 +7,7 @@
 
 #include "my_world.h"
 
-void menu_evt(global *g, sfEvent *evt, sfRenderWindow *window)
+void menu_evt(global_t *g, sfEvent *evt, sfRenderWindow *window)
 {
     if (evt->type == sfEvtTextEntered && g->is_typing == 1)
         currently_typing(g, evt);
@@ -19,7 +19,7 @@ void menu_evt(global *g, sfEvent *evt, sfRenderWindow *window)
     input_menu_button_on_click(g, evt);
 }
 
-void menu_button_hover(global *g, sfEvent *evt)
+void menu_button_hover(global_t *g, sfEvent *evt)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;
@@ -42,7 +42,7 @@ void menu_button_hover(global *g, sfEvent *evt)
     }
 }
 
-void input_menu_button_on_click(global *g, sfEvent *evt)
+void input_menu_button_on_click(global_t *g, sfEvent *evt)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;
@@ -62,7 +62,7 @@ void input_menu_button_on_click(global *g, sfEvent *evt)
     }
 }
 
-int truc (menu_t *menu, sfEvent *evt, sfVector2i v, global *g)
+int truc (menu_t *menu, sfEvent *evt, sfVector2i v, global_t *g)
 {
     if (g->curr_menu->data == M_COORDS && evt->type == 10) {
         if (sfFloatRect_contains(&menu->buttons[2]->collision_box, v.x, v.y)) {
@@ -83,7 +83,7 @@ int truc (menu_t *menu, sfEvent *evt, sfVector2i v, global *g)
     }
 }
 
-void coords_menu_button_on_click(global *g, sfEvent *evt, sfRenderWindow* w)
+void coords_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow* w)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;

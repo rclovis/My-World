@@ -50,9 +50,9 @@ int is_in_screen (float **v1, float **v2, float **v3, quad_list *elem)
     return (1);
 }
 
-global *setup_global (char *name, quad_list *root, int bool)
+global_t *setup_global (char *name, quad_list *root, int bool)
 {
-    global *g = malloc(sizeof(global));
+    global_t *g = malloc(sizeof(global_t));
     setup_global3(g);
     g->root = root;
     g->name = name;
@@ -74,7 +74,7 @@ global *setup_global (char *name, quad_list *root, int bool)
     return g;
 }
 
-void setup_global2 (global *g, int bool)
+void setup_global2 (global_t *g, int bool)
 {
     g->vertex = sfCircleShape_create();
     sfCircleShape_setRadius(g->vertex, 5);
@@ -98,7 +98,7 @@ void setup_global2 (global *g, int bool)
         g->click = sfMusic_createFromFile("assets/sounds/click2.ogg");
 }
 
-void setup_global3 (global *g)
+void setup_global3 (global_t *g)
 {
     g->x2 = 1;
     g->apply_mode = 0;

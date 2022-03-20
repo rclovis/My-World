@@ -43,7 +43,7 @@ int main (int argc, char **argv)
     return 1;
 }
 
-void event_poll (sfEvent event, global *g, quad_list *root, sfRenderWindow *w)
+void event_poll (sfEvent event, global_t *g, quad_list *root, sfRenderWindow *w)
 {
     int buttons[5] = {76, 77, 78, 79, 80}, b = 0;
     int x = event.mouseButton.x, y = event.mouseButton.y;

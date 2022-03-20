@@ -7,7 +7,7 @@
 
 #include "../inc/my_world.h"
 
-global *aled2 (global *g, sfClock *clock, sfEvent *event, sfRenderWindow *w)
+global_t *aled2 (global_t *g, sfClock *clock, sfEvent *event, sfRenderWindow *w)
 {
     display_fps(g->fps);
     place_circle(g->root, (sfVector2i) {-100, -100}, g->vertex);
@@ -29,7 +29,7 @@ global *aled2 (global *g, sfClock *clock, sfEvent *event, sfRenderWindow *w)
     return g;
 }
 
-void aled3 (global *g, sfRenderWindow *w)
+void aled3 (global_t *g, sfRenderWindow *w)
 {
     for (quad_list *ptr = g->root;ptr != NULL; ptr = ptr->next) {
         if (ptr->display == 1) {
@@ -47,7 +47,7 @@ void aled3 (global *g, sfRenderWindow *w)
     sfRenderWindow_display(w);
 }
 
-global *aled4 (global *g, float zoom, float *z, sfEvent *event)
+global_t *aled4 (global_t *g, float zoom, float *z, sfEvent *event)
 {
     g->fps->frames++;
     g->state = 0;
@@ -69,7 +69,7 @@ int my_world (sfRenderWindow *w, char *f, quad_list *r, int bool)
     if (w == 0) return 0;
     sfClock *clock = sfClock_create();
     sfEvent event;
-    global *g = setup_global(f, r, bool - 1);
+    global_t *g = setup_global(f, r, bool - 1);
     float time = 0, zoom = 1, z = 0.3;
     sfRenderWindow_setFramerateLimit(w, 60);
     while (sfRenderWindow_isOpen(w)) {

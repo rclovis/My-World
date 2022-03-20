@@ -7,7 +7,7 @@
 
 #include "my_world.h"
 
-void pause_menu_button_on_click(global *g, sfEvent *evt)
+void pause_menu_button_on_click(global_t *g, sfEvent *evt)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;
@@ -30,7 +30,7 @@ void pause_menu_button_on_click(global *g, sfEvent *evt)
     }
 }
 
-void main_menu_button_on_click(global *g, sfEvent *evt)
+void main_menu_button_on_click(global_t *g, sfEvent *evt)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;

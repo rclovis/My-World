@@ -7,7 +7,7 @@
 
 #include "my_world.h"
 
-menu_t * get_curr_menu(global *g)
+menu_t * get_curr_menu(global_t *g)
 {
     if (g->curr_menu == NULL)
         return NULL;
@@ -25,7 +25,7 @@ menu_t * get_curr_menu(global *g)
     }
 }
 
-void render_menu(sfRenderWindow *win, global *g)
+void render_menu(sfRenderWindow *win, global_t *g)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL)

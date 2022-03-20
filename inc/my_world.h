@@ -63,8 +63,7 @@ typedef struct toolbar {
     int view_toggle;
 } toolbar_t;
 
-typedef struct global global;
-struct global {
+typedef struct global {
     callstack_t *curr_menu;
     char *name;
     fps_t *fps;
@@ -98,7 +97,7 @@ struct global {
     sfVertexArray *tile;
     toolbar_t *tb;
     sfCircleShape *vertex;
-};
+} global_t;
 
 typedef struct linked_vertex {
     float x;
@@ -108,7 +107,7 @@ typedef struct linked_vertex {
 } linked_vertex_t;
 
 quad_list *spinning_clock(sfClock *c, sfRenderWindow *w, quad_list *root,
-global *g);
+global_t *g);
 button_t *button_init(const char *text, sfFont *font, sfTexture *texture);
 callstack_t *callstack_add(callstack_t *curr_head, int value);
 callstack_t *callstack_del(callstack_t *curr_head);
@@ -126,10 +125,10 @@ float multiply2 (float **m1, float **m2, int x, int y);
 float my_atof (char *str);
 float ** set_hooked_point (linked_vertex_t *vl, char **t, quad_list *ptr, int i);
 fps_t *fps_init(void);
-global *setup_global (char *name, quad_list *root, int bool);
+global_t *setup_global (char *name, quad_list *root, int bool);
 int approximation (int i, int j, int delta);
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window,
-global *g);
+global_t *g);
 int coding_style2 (sfVector2f v1, sfVector2f v2, sfVertexArray *bevel);
 int compute_centre (float **mx, quad_list *elem);
 int free_quad_list (quad_list *root);
@@ -148,7 +147,7 @@ int save_points (quad_list *ptr, FILE *stream);
 linked_vertex_t *get_vertex (char **object, sfVector3f pos);
 linked_vertex_t *hook_vertex (linked_vertex_t *root, int i);
 long long my_getnbr2 (const char *str);
-menu_t * get_curr_menu(global *g);
+menu_t * get_curr_menu(global_t *g);
 menu_t *coords_menu_init(sfFont *font, sfTexture *button_texture);
 menu_t *input_menu_init(sfFont *font, sfTexture *button_texture);
 menu_t *main_menu_init(sfFont *font, sfTexture *button_texture);
@@ -161,22 +160,22 @@ quad_list *tri_two (float x, float y, float z, sfTexture *texture);
 sfRenderStates *render_setup (sfTexture *texture);
 sfRenderWindow *spinning_menu (int v, char **file, quad_list **root);
 toolbar_t *setup_toolbar(void);
-void activate_typing(global *g);
+void activate_typing(global_t *g);
 void calcul_projection (quad_list *elem, float **m1, float **comb);
 void change_texture (quad_list *root, sfVector2i m, int button);
-void coords_menu_button_on_click(global *g, sfEvent *evt, sfRenderWindow* w);
-void currently_typing(global *g, sfEvent *evt);
+void coords_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow* w);
+void currently_typing(global_t *g, sfEvent *evt);
 void display_fps(fps_t *fps);
-void event_poll (sfEvent event, global *g, quad_list *root,
+void event_poll (sfEvent event, global_t *g, quad_list *root,
 sfRenderWindow *window);
 void free_matrix (float **m, int y);
-void input_menu_button_on_click(global *g, sfEvent *evt);
+void input_menu_button_on_click(global_t *g, sfEvent *evt);
 void loop_button (int *button, int *n_texture);
-void main_menu_button_on_click(global *g, sfEvent *evt);
-void menu_button_hover(global *g, sfEvent *evt);
-void menu_evt(global *g, sfEvent *evt, sfRenderWindow *window);
+void main_menu_button_on_click(global_t *g, sfEvent *evt);
+void menu_button_hover(global_t *g, sfEvent *evt);
+void menu_evt(global_t *g, sfEvent *evt, sfRenderWindow *window);
 void move_toolbar_cursor(toolbar_t *tb, int new_mode);
-void pause_menu_button_on_click(global *g, sfEvent *evt);
+void pause_menu_button_on_click(global_t *g, sfEvent *evt);
 void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c);
 void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel);
 void place_tile (quad_list *root, sfVector2i m, sfVertexArray *tile);
@@ -184,19 +183,19 @@ void raise_line (quad_list *root, sfVector2i m, int button, float strengh);
 void raise_tile (quad_list *root, sfVector2i m, int button, float strengh);
 void raise_vertex (quad_list *root, sfVector2i m, int button, float strengh);
 void raise_zone (quad_list *root, sfVector2i m, int button, float strengh);
-void render_menu(sfRenderWindow *win, global *g);
+void render_menu(sfRenderWindow *win, global_t *g);
 void render_toolbar(sfRenderWindow *win, toolbar_t *tb);
-void setup_global2 (global *g, int bool);
-void setup_global3 (global *g);
+void setup_global2 (global_t *g, int bool);
+void setup_global3 (global_t *g);
 void toggle_toolbar_visibility(toolbar_t *tb);
 void update_mesh (quad_list *root, float zoom, float x, float z);
-void aled (global *g, char **file, quad_list **to_send);
-global *aled2 (global *g, sfClock *clock, sfEvent *event, sfRenderWindow *w);
-void aled3 (global *g, sfRenderWindow *w);
-global *aled4 (global *g, float zoom, float *z, sfEvent *event);
-quad_list *in_spin_time(sfRenderWindow *w, quad_list *r, global *g,
+void aled (global_t *g, char **file, quad_list **to_send);
+global_t *aled2 (global_t *g, sfClock *clock, sfEvent *event, sfRenderWindow *w);
+void aled3 (global_t *g, sfRenderWindow *w);
+global_t *aled4 (global_t *g, float zoom, float *z, sfEvent *event);
+quad_list *in_spin_time(sfRenderWindow *w, quad_list *r, global_t *g,
 sfClock *c);
-void spinning_evt(sfRenderWindow *w, sfEvent *evt, global *g);
+void spinning_evt(sfRenderWindow *w, sfEvent *evt, global_t *g);
 sfRenderWindow *win_init(void);
 
 #endif

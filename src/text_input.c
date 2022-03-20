@@ -7,7 +7,7 @@
 
 #include "my_world.h"
 
-void currently_typing(global *g, sfEvent *evt)
+void currently_typing(global_t *g, sfEvent *evt)
 {
     if (evt->text.unicode == BACKSPACE) {
         (g->cursor > 0) ? (g->cursor--) : (0);
