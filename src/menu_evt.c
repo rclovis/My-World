@@ -34,8 +34,7 @@ void menu_button_hover(global *g, sfEvent *evt)
             rect->top = 80;
             (g->curr_menu->data == M_MAIN) ? g->id_menu = i : 0;
             sfSprite_setTextureRect(menu->buttons[i]->sprite, *rect);
-        }
-        else if (!(i == 0 && g->curr_menu->data == 3) &&
+        } else if (!(i == 0 && g->curr_menu->data == 3) &&
         !(i < 2 && g->curr_menu->data == 4)) {
             rect->top = 40;
             sfSprite_setTextureRect(menu->buttons[i]->sprite, *rect);

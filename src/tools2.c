@@ -48,8 +48,7 @@ int my_item_count(const char *str, char sep)
         if (*str != sep && in_item == 0) {
             item_count++;
             in_item = 1;
-        }
-        else if (*str == sep)
+        } else if (*str == sep)
             in_item = 0;
         str++;
     }
