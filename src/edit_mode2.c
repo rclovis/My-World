@@ -70,7 +70,7 @@ void raise_zone (quad_list *root, sfVector2i m, int button, float strengh)
         for (int i = 0;i < 3;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
         temp = sqrt(pow(m.x - p[0].x, 2) + pow(m.y - p[0].y, 2));
-        ptr->p1[2][0] +=  strengh * exp(-pow(temp / 10, 2) / 5);
+        ptr->p1[2][0] += strengh * exp(-pow(temp / 10, 2) / 5);
         temp = sqrt(pow(m.x - p[1].x, 2) + pow(m.y - p[1].y, 2));
         ptr->p2[2][0] += strengh * exp(-pow(temp / 10, 2) / 5);
         temp = sqrt(pow(m.x - p[2].x, 2) + pow(m.y - p[2].y, 2));
