@@ -47,14 +47,14 @@ void aled3 (global_t *g, sfRenderWindow *w)
     sfRenderWindow_display(w);
 }
 
-global_t *aled4 (global_t *g, float zoom, float *z, sfEvent *event)
+global_t *aled4 (global_t *g, float *zoom, float *z, sfEvent *event)
 {
     g->fps->frames++;
     g->state = 0;
     if (event->type == sfEvtKeyPressed || event->mouseWheel.type == 8) {
         g->state = 1;
         g->refresh = 1;
-        zoom += event->mouseWheelScroll.delta * 0.1;
+        *zoom += event->mouseWheelScroll.delta * 0.1;
         event->mouseWheelScroll.delta = 0;
         (event->key.code == sfKeyUp) ? g->x2 -= 0.03 : 0;
         (event->key.code == sfKeyDown) ? g->x2 += 0.03 : 0;
@@ -77,7 +77,7 @@ int my_world (sfRenderWindow *w, char *f, quad_list *r, int bool)
         aled2(g, clock, &event, w);
         if (time > 0.01) {
             sfRenderWindow_clear(w, sfBlue);
-            g = aled4(g, zoom, &z, &event);
+            g = aled4(g, &zoom, &z, &event);
             (g->refresh == 1) ? update_mesh(g->root, zoom, g->x2, z) : 0;
             (g->refresh == 1) ? g->root = push_swap(g->root) : 0;
             g->refresh = 0;

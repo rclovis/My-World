@@ -9,10 +9,12 @@
 
 void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c)
 {
-    sfVector2f p1, p2, p3, p4, *p = malloc(sizeof(sfVector2f) * 4);
+    sfVector2f p1, p2, p3, p4;
+    sfVector2f *p = calloc(sizeof(sfVector2f), 4);
     for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
         if (ptr->display == 0) continue;
-        for (int i = 0;i < 4;i++)
+        if (sfVertexArray_getVertexCount(ptr->array) != 3) continue;
+        for (int i = 0;i < 3;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
         if (approximation(p[0].x, m.x, 10) && approximation(p[0].y, m.y, 10)) {
             sfCircleShape_setPosition(c, (sfVector2f) {p[0].x, p[0].y});
@@ -33,9 +35,10 @@ void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c)
 
 void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel)
 {
-    sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
+    sfVector2f *p = calloc(sizeof(sfVector2f), 4);
     for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
-        for (int i = 0;i < 4;i++)
+        if (sfVertexArray_getVertexCount(ptr->array) != 3) continue;
+        for (int i = 0;i < 3;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
         if (is_between(p[0], p[1], m)) {
             coding_style2(p[0], p[1], bevel);
@@ -57,10 +60,11 @@ void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel)
 
 void place_tile (quad_list *root, sfVector2i m, sfVertexArray *tile)
 {
-    sfVector2f *p = malloc(sizeof(sfVector2f) * 4);
+    sfVector2f *p = calloc(sizeof(sfVector2f), 4);
     float a = 0, b = 0;
     for (quad_list *ptr = root;ptr != NULL;ptr = ptr->next) {
-        for (int i = 0;i < 4;i++)
+        if (sfVertexArray_getVertexCount(ptr->array) != 3) continue;
+        for (int i = 0;i < 3;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
 
         if (is_in_triangle(m, p[0], p[1], p[2])) {

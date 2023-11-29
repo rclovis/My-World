@@ -122,7 +122,7 @@ float **projection_matrix (void);
 float **x_rotation (float r);
 float **zoom_matrix (float zoom);
 float multiply2 (float **m1, float **m2, int x, int y);
-float my_atof (char *str);
+// float atof (char *str);
 float ** set_hooked_point (linked_vertex_t *vl, char **t, quad_list *ptr, int i);
 fps_t *fps_init(void);
 global_t *setup_global (char *name, quad_list *root, int bool);
@@ -192,7 +192,7 @@ void update_mesh (quad_list *root, float zoom, float x, float z);
 void aled (global_t *g, char **file, quad_list **to_send);
 global_t *aled2 (global_t *g, sfClock *clock, sfEvent *event, sfRenderWindow *w);
 void aled3 (global_t *g, sfRenderWindow *w);
-global_t *aled4 (global_t *g, float zoom, float *z, sfEvent *event);
+global_t *aled4 (global_t *g, float *zoom, float *z, sfEvent *event);
 quad_list *in_spin_time(sfRenderWindow *w, quad_list *r, global_t *g,
 sfClock *c);
 void spinning_evt(sfRenderWindow *w, sfEvent *evt, global_t *g);

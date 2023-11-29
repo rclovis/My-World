@@ -19,9 +19,9 @@ linked_vertex_t *get_vertex (char **object, sfVector3f pos)
             ptr->next = malloc(sizeof(linked_vertex_t));
             ptr = ptr->next;
             ptr->next = NULL;
-            ptr->x = my_atof(temp[0]) + pos.x;
-            ptr->y = my_atof(temp[1]) + pos.z;
-            ptr->z = my_atof(temp[2]) + pos.y;
+            ptr->x = atof(temp[0]) + pos.x;
+            ptr->y = atof(temp[1]) + pos.z;
+            ptr->z = atof(temp[2]) + pos.y;
             free(temp[0]);
             free(temp[1]);
             free(temp[2]);

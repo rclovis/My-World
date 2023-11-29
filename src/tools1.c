@@ -41,23 +41,23 @@ int free_quad_list (quad_list *root)
     return (0);
 }
 
-float my_atof (char *str)
-{
-    int i = 0;
-    double p1 = 0, p2 = 0, pow = 1, sign = 1;
-    for (int j = 0;str[j] != '\0';j++)
-        (str[j] == '\n') ? str[j] = '\0' : 0;
-    if (str[0] == '-') {
-        sign = -1;
-        str = &str[1];
-    }
-    for (i = 0;str[i] != '.' && str[i] != '\0';i++);
-    str[i + 1 + 9] = '\0';
-    p1 = my_getnbr2(str);
-    p2 = my_getnbr2(&str[i + 1]);
-    for (int j = 0;j < my_strlen(&str[i + 1]);pow /= 10, j++);
-    return (p1 + (p2 * pow)) * sign;
-}
+// float atof (char *str)
+// {
+//     int i = 0;
+//     double p1 = 0, p2 = 0, pow = 1, sign = 1;
+//     for (int j = 0;str[j] != '\0';j++)
+//         (str[j] == '\n') ? str[j] = '\0' : 0;
+//     if (str[0] == '-') {
+//         sign = -1;
+//         str = &str[1];
+//     }
+//     for (i = 0;str[i] != '.' && str[i] != '\0';i++);
+//     str[i + 1 + 9] = '\0';
+//     p1 = my_getnbr2(str);
+//     p2 = my_getnbr2(&str[i + 1]);
+//     for (int j = 0;j < my_strlen(&str[i + 1]);pow /= 10, j++);
+//     return (p1 + (p2 * pow)) * sign;
+// }
 
 long long my_getnbr2(const char *str)
 {
