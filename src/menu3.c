@@ -13,12 +13,14 @@ global_t *aled2 (global_t *g, sfClock *clock, sfEvent *event, sfRenderWindow *w)
     place_circle(g->root, (sfVector2i) {-100, -100}, g->vertex);
     place_line(g->root, (sfVector2i) {-100, -100}, g->bevel);
     place_tile(g->root, (sfVector2i) {-100, -100}, g->tile);
+    sfVector2f mouse_pos = sfRenderWindow_mapPixelToCoords(w, sfMouse_getPositionRenderWindow(w), NULL);
+    sfVector2i m = {mouse_pos.x, mouse_pos.y};
     if (g->tb->edit_mode == 0)
-        place_circle(g->root, sfMouse_getPositionRenderWindow(w), g->vertex);
+        place_circle(g->root, m, g->vertex);
     if (g->tb->edit_mode == 1)
-        place_line(g->root, sfMouse_getPositionRenderWindow(w), g->bevel);
+        place_line(g->root, m, g->bevel);
     if (g->tb->edit_mode == 2 || g->tb->edit_mode == 4)
-        place_tile(g->root, sfMouse_getPositionRenderWindow(w), g->tile);
+        place_tile(g->root, m, g->tile);
     while (sfRenderWindow_pollEvent(w, event)) {
         (event->type == 0 || g->complete2 == 1) ? sfRenderWindow_close(w) : 0;
         menu_evt(g, event, w);
@@ -76,7 +78,7 @@ int my_world (sfRenderWindow *w, char *f, quad_list *r, int bool)
         time = sfClock_getElapsedTime(clock).microseconds / 2500000.0;
         aled2(g, clock, &event, w);
         if (time > 0.01) {
-            sfRenderWindow_clear(w, sfBlue);
+            sfRenderWindow_clear(w, sfColor_fromRGB(58, 196, 214));
             g = aled4(g, &zoom, &z, &event);
             (g->refresh == 1) ? update_mesh(g->root, zoom, g->x2, z) : 0;
             (g->refresh == 1) ? g->root = push_swap(g->root) : 0;

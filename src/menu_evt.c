@@ -12,19 +12,20 @@ void menu_evt(global_t *g, sfEvent *evt, sfRenderWindow *window)
     if (evt->type == sfEvtTextEntered && g->is_typing == 1)
         currently_typing(g, evt);
 
-    menu_button_hover(g, evt);
+    menu_button_hover(g, evt, window);
     coords_menu_button_on_click(g, evt, window);
-    main_menu_button_on_click(g, evt);
-    pause_menu_button_on_click(g, evt);
-    input_menu_button_on_click(g, evt);
+    main_menu_button_on_click(g, evt, window);
+    pause_menu_button_on_click(g, evt, window);
+    input_menu_button_on_click(g, evt, window);
 }
 
-void menu_button_hover(global_t *g, sfEvent *evt)
+void menu_button_hover(global_t *g, sfEvent *evt, sfRenderWindow *window)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;
-    int x = evt->mouseMove.x;
-    int y = evt->mouseMove.y;
+    sfVector2f mouse_pos = sfRenderWindow_mapPixelToCoords(window, sfMouse_getPositionRenderWindow(window), NULL);
+    int x = (int) mouse_pos.x;
+    int y = (int) mouse_pos.y;
     if (evt->type != sfEvtMouseMoved) return;
     for (int i = 0; menu->buttons[i] != NULL; i++) {
         sfIntRect *rect = &menu->buttons[i]->rect;
@@ -42,12 +43,13 @@ void menu_button_hover(global_t *g, sfEvent *evt)
     }
 }
 
-void input_menu_button_on_click(global_t *g, sfEvent *evt)
+void input_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow *window)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;
-    int x = evt->mouseButton.x;
-    int y = evt->mouseButton.y;
+    sfVector2f mouse_pos = sfRenderWindow_mapPixelToCoords(window, sfMouse_getPositionRenderWindow(window), NULL);
+    int x = (int) mouse_pos.x;
+    int y = (int) mouse_pos.y;
     if (evt->type == 10 && g->curr_menu->data == M_INPUT) {
         if (sfFloatRect_contains(&menu->buttons[1]->collision_box, x, y)) {
             g->is_typing = 0;
@@ -87,8 +89,9 @@ void coords_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow* w)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;
-    int x = sfMouse_getPositionRenderWindow(w).x;
-    int y = sfMouse_getPositionRenderWindow(w).y;
+    sfVector2f mouse_pos = sfRenderWindow_mapPixelToCoords(w, sfMouse_getPositionRenderWindow(w), NULL);
+    int x = (int) mouse_pos.x;
+    int y = (int) mouse_pos.y;
     int tmp = 0;
     if (g->curr_menu->data == M_COORDS && evt->mouseWheel.type == 8) {
         if (sfFloatRect_contains(&menu->buttons[0]->collision_box, x, y)) {

@@ -5,26 +5,25 @@
 ** my_world.h
 */
 
-#ifndef my_world_H_
-    #define my_world_H_
+#pragma once
 
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <unistd.h>
-    #include <math.h>
-    #include <SFML/Audio.h>
-    #include <SFML/Graphics.h>
-    #include <sys/types.h>
-    #include <dirent.h>
-    #include "my.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <math.h>
+#include <SFML/Audio.h>
+#include <SFML/Graphics.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include "my.h"
 
-    #define BACKSPACE 8
-    #define ENTER 13
-    #define INPUT_BUFFER_SIZE 20
-    #define M_COORDS 4
-    #define M_INPUT 3
-    #define M_MAIN 1
-    #define M_PAUSE 2
+#define BACKSPACE 8
+#define ENTER 13
+#define INPUT_BUFFER_SIZE 20
+#define M_COORDS 4
+#define M_INPUT 3
+#define M_MAIN 1
+#define M_PAUSE 2
 
 typedef struct callstack {
     int data;
@@ -122,14 +121,12 @@ float **projection_matrix (void);
 float **x_rotation (float r);
 float **zoom_matrix (float zoom);
 float multiply2 (float **m1, float **m2, int x, int y);
-// float atof (char *str);
 float ** set_hooked_point (linked_vertex_t *vl, char **t, quad_list *ptr, int i);
 fps_t *fps_init(void);
 global_t *setup_global (char *name, quad_list *root, int bool);
 int approximation (int i, int j, int delta);
 int clic_management (sfEvent *event, quad_list *root, sfRenderWindow *window,
 global_t *g);
-int coding_style2 (sfVector2f v1, sfVector2f v2, sfVertexArray *bevel);
 int compute_centre (float **mx, quad_list *elem);
 int free_quad_list (quad_list *root);
 int get_item_end(const char *str, char sep);
@@ -142,11 +139,10 @@ int my_world (sfRenderWindow *window, char *f, quad_list *r, int bool);
 int play_music (sfMusic *music);
 int raise_line_bis (quad_list *root, sfVector2i m, sfVector2i bs,
 sfVector2f *p);
-int save_file (quad_list *root, char *name);
+int save_file (quad_list *root, char *path);
 int save_points (quad_list *ptr, FILE *stream);
 linked_vertex_t *get_vertex (char **object, sfVector3f pos);
 linked_vertex_t *hook_vertex (linked_vertex_t *root, int i);
-long long my_getnbr2 (const char *str);
 menu_t * get_curr_menu(global_t *g);
 menu_t *coords_menu_init(sfFont *font, sfTexture *button_texture);
 menu_t *input_menu_init(sfFont *font, sfTexture *button_texture);
@@ -169,13 +165,13 @@ void display_fps(fps_t *fps);
 void event_poll (sfEvent event, global_t *g, quad_list *root,
 sfRenderWindow *window);
 void free_matrix (float **m, int y);
-void input_menu_button_on_click(global_t *g, sfEvent *evt);
+void input_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow *w);
 void loop_button (int *button, int *n_texture);
-void main_menu_button_on_click(global_t *g, sfEvent *evt);
-void menu_button_hover(global_t *g, sfEvent *evt);
+void main_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow *w);
+void menu_button_hover(global_t *g, sfEvent *evt, sfRenderWindow *window);
 void menu_evt(global_t *g, sfEvent *evt, sfRenderWindow *window);
 void move_toolbar_cursor(toolbar_t *tb, int new_mode);
-void pause_menu_button_on_click(global_t *g, sfEvent *evt);
+void pause_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow *w);
 void place_circle (quad_list *root, sfVector2i m, sfCircleShape *c);
 void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel);
 void place_tile (quad_list *root, sfVector2i m, sfVertexArray *tile);
@@ -197,5 +193,3 @@ quad_list *in_spin_time(sfRenderWindow *w, quad_list *r, global_t *g,
 sfClock *c);
 void spinning_evt(sfRenderWindow *w, sfEvent *evt, global_t *g);
 sfRenderWindow *win_init(void);
-
-#endif

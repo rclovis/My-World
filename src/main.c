@@ -46,7 +46,9 @@ int main (int argc, char **argv)
 void event_poll (sfEvent event, global_t *g, quad_list *root, sfRenderWindow *w)
 {
     int buttons[5] = {76, 77, 78, 79, 80}, b = 0;
-    int x = event.mouseButton.x, y = event.mouseButton.y;
+    sfVector2f mouse_pos = sfRenderWindow_mapPixelToCoords(w, sfMouse_getPositionRenderWindow(w), NULL);
+    int x = (int) mouse_pos.x;
+    int y = (int) mouse_pos.y;
     int is_clicking = (event.type == sfEvtMouseButtonReleased) ? 1 : 0;
     for (int i = 0;i < 5 && is_clicking == 1;i++) {
         if (sfFloatRect_contains(&g->tb->icons_rect[i + 1], x, y)) {

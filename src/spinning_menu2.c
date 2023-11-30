@@ -27,7 +27,7 @@ void spinning_evt(sfRenderWindow *w, sfEvent *evt, global_t *g)
 quad_list *in_spin_time(sfRenderWindow *w, quad_list *r, global_t *g, sfClock *c)
 {
     g->z += (g->v == 1) ? 0.05 : 0.01;
-    sfRenderWindow_clear(w, sfBlue);
+    sfRenderWindow_clear(w, sfColor_fromRGB(58, 196, 214));
     update_mesh(r, g->zoom, g->x2, g->z);
     r = push_swap(r);
     for (quad_list *ptr = r;ptr != NULL; ptr = ptr->next) {

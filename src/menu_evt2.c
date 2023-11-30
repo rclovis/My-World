@@ -7,12 +7,13 @@
 
 #include "my_world.h"
 
-void pause_menu_button_on_click(global_t *g, sfEvent *evt)
+void pause_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow *window)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;
-    int x = evt->mouseButton.x;
-    int y = evt->mouseButton.y;
+    sfVector2f mouse_pos = sfRenderWindow_mapPixelToCoords(window, sfMouse_getPositionRenderWindow(window), NULL);
+    int x = (int) mouse_pos.x;
+    int y = (int) mouse_pos.y;
     if (evt->type == 10 && g->curr_menu->data == M_PAUSE) {
         if (sfFloatRect_contains(&menu->buttons[0]->collision_box, x, y)) {
             play_music(g->click);
@@ -30,12 +31,13 @@ void pause_menu_button_on_click(global_t *g, sfEvent *evt)
     }
 }
 
-void main_menu_button_on_click(global_t *g, sfEvent *evt)
+void main_menu_button_on_click(global_t *g, sfEvent *evt, sfRenderWindow *window)
 {
     menu_t *menu = get_curr_menu(g);
     if (menu == NULL) return;
-    int x = evt->mouseButton.x;
-    int y = evt->mouseButton.y;
+    sfVector2f mouse_pos = sfRenderWindow_mapPixelToCoords(window, sfMouse_getPositionRenderWindow(window), NULL);
+    int x = (int) mouse_pos.x;
+    int y = (int) mouse_pos.y;
     if (evt->type == 10 && g->curr_menu->data == M_MAIN) {
         if (sfFloatRect_contains(&menu->buttons[0]->collision_box, x, y)) {
             g->is_typing = 1;
@@ -56,7 +58,7 @@ void main_menu_button_on_click(global_t *g, sfEvent *evt)
 
 int play_music (sfMusic *music)
 {
-        sfMusic_stop(music);
+    sfMusic_stop(music);
     sfMusic_play(music);
 }
 

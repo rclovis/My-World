@@ -41,15 +41,18 @@ void place_line (quad_list *root, sfVector2i m, sfVertexArray *bevel)
         for (int i = 0;i < 3;i++)
             p[i] = sfVertexArray_getVertex(ptr->array, i)->position;
         if (is_between(p[0], p[1], m)) {
-            coding_style2(p[0], p[1], bevel);
+            sfVertexArray_getVertex(bevel, 0)->position = p[0];
+            sfVertexArray_getVertex(bevel, 1)->position = p[1];
             return free(p);
         }
         if (is_between(p[1], p[2], m)) {
-            coding_style2(p[1], p[2], bevel);
+            sfVertexArray_getVertex(bevel, 0)->position = p[1];
+            sfVertexArray_getVertex(bevel, 1)->position = p[2];
             return free(p);
         }
         if (is_between(p[2], p[0], m)) {
-            coding_style2(p[2], p[0], bevel);
+            sfVertexArray_getVertex(bevel, 0)->position = p[2];
+            sfVertexArray_getVertex(bevel, 1)->position = p[0];
             return free(p);
         }
     }

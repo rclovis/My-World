@@ -43,9 +43,8 @@ void loop_button (int *button, int *n_texture)
 int clic_management (sfEvent *event, quad_list *root,
 sfRenderWindow *window, global_t *g)
 {
-    sfVector2f mpos2 = sfRenderWindow_mapPixelToCoords(window,
-    sfMouse_getPositionRenderWindow(window), NULL);
-    sfVector2i m = {mpos2.x, mpos2.y};
+    sfVector2f mouse_pos = sfRenderWindow_mapPixelToCoords(window, sfMouse_getPositionRenderWindow(window), NULL);
+    sfVector2i m = {mouse_pos.x, mouse_pos.y};
     if (event->type != sfEvtMouseButtonReleased)
         return 0;
     if (g->tb->edit_mode == 0)

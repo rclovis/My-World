@@ -62,7 +62,7 @@ quad_list *add_object (quad_list *root, char *file, sfVector3f pos)
 
 float **set_hooked_point (linked_vertex_t *vl, char **t, quad_list *ptr, int i)
 {
-    linked_vertex_t *hook = hook_vertex(vl, my_getnbr2(t[i]));
+    linked_vertex_t *hook = hook_vertex(vl, atoi(t[i]));
     float **zoom = multiply1(x_rotation(1.57), zoom_matrix(15), 3, 3), **m = 0;
     sfVertexArray_getVertex(ptr->array, i)->color = sfRed;
     (i == 0) ? ptr->p1[0][0] = hook->x : 0;
